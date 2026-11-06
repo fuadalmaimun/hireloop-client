@@ -3,7 +3,7 @@ import { Navbar } from "@/components/navbar";
 
 export default function Page() {
   return (
-    <div>
+    <div className="min-h-screen bg-[#010109]">
       <Navbar />
       <Hero />
     </div>

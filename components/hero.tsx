@@ -81,7 +81,7 @@ export function Hero() {
         aria-hidden="true"
       >
         {/* Top Radial Glow */}
-        <div className="absolute inset-x-0 top-0 h-[300px] sm:h-[380px] bg-[radial-gradient(ellipse_at_50%_0%,rgba(255,255,255,0.14),transparent_72%)]" />
+        <div className="absolute inset-x-0 top-0 h-[240px] opacity-50 sm:h-[380px] sm:opacity-100 bg-[radial-gradient(ellipse_at_50%_0%,rgba(255,255,255,0.14),transparent_72%)]" />
 
         {/* Soft Ambient Glow */}
         <div className="absolute left-1/2 top-[250px] sm:top-[350px] md:top-[390px] h-[300px] sm:h-[450px] w-[90vw] max-w-[850px] -translate-x-1/2 rounded-full bg-white/[0.04] blur-[120px] sm:blur-[150px]" />
@@ -156,7 +156,7 @@ export function Hero() {
           <button
             type="submit"
             aria-label="Search jobs"
-            className="flex h-10 sm:h-10 sm:w-10 items-center justify-center gap-2 rounded-lg bg-[#5c53fe] px-4 sm:px-0 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-[#6c63ff] shrink-0 mt-1 sm:mt-0"
+            className="flex h-10 sm:h-10 sm:w-10 items-center justify-center gap-2 rounded-lg bg-[#5c53fe] px-4 sm:px-0 text-xs sm:text-sm font-medium text-white transition-colors hover:bg-[#6c63ff] shrink-0"
           >
             <Search className="size-4 text-white" />
             <span className="sm:hidden font-medium">Search Jobs</span>
@@ -188,7 +188,13 @@ export function Hero() {
           alt="Globe illustration"
           priority
           aria-hidden="true"
-          className="pointer-events-none absolute left-1/2 top-[calc(-10px_-_min(59.375vw,855px))] sm:top-[calc(10px_-_min(59.375vw,855px))] lg:top-[calc(30px_-_min(59.375vw,855px))] z-0 h-auto w-[min(100vw,1440px)] -translate-x-1/2 object-contain"
+          className="pointer-events-none absolute left-1/2 top-[calc(-10px_-_74.2188vw)] sm:top-[calc(10px_-_min(59.375vw,855px))] lg:top-[calc(30px_-_min(59.375vw,855px))] z-0 h-auto w-[125vw] sm:w-[min(100vw,1440px)] -translate-x-1/2 object-contain [mask-image:linear-gradient(to_right,transparent,black_3%,black_97%,transparent)]"
+        />
+
+        {/* Mobile haze dimmer — tames the bright fog on small screens */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 top-[calc(-74.2188vw_-_80px)] z-[5] h-[calc(74.2188vw_+_180px)] bg-gradient-to-b from-[#010109] via-[#010109]/55 via-50% to-transparent sm:hidden"
         />
 
         {/* Globe Line Art Component */}

@@ -26,7 +26,7 @@ export function Navbar() {
 
   return (
     <header className="absolute inset-x-0 top-0 z-50 w-full px-4 pt-4 sm:px-6 sm:pt-6 lg:px-8">
-      <div className="mx-auto flex h-11 max-w-6xl items-center justify-between rounded-xl border border-white/[0.08] bg-[#1a1a1e]/80 py-2.5 pr-2.5 pl-4 shadow-[0_4px_20px_rgba(0,0,0,0.4)] backdrop-blur-md sm:h-12">
+      <div className="mx-auto flex h-11 max-w-6xl items-center justify-between rounded-xl border border-white/[0.08] bg-[#1a1a1e]/90 py-2.5 pr-2.5 pl-4 shadow-[0_4px_20px_rgba(0,0,0,0.4)] backdrop-blur-md sm:h-12">
         {/* Logo */}
         <Link href="/" className="shrink-0">
           <Image
@@ -35,7 +35,7 @@ export function Navbar() {
             width={150}
             height={38}
             priority
-            className="h-7 w-auto sm:h-8"
+            className="h-7 w-auto sm:h-8 object-contain"
           />
         </Link>
 
@@ -66,14 +66,14 @@ export function Navbar() {
           </Link>
 
           <Link
-            href="/get-started"
+            href="/sign-up"
             className="inline-flex h-8 items-center justify-center rounded-lg bg-[#5c53fe] px-3.5 text-[11px] font-medium text-white shadow-[0_0_15px_rgba(92,83,254,0.3)] transition-all hover:bg-[#6c63ff] lg:text-xs"
           >
             Get Started
           </Link>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation Sheet */}
         <Sheet open={open} onOpenChange={setOpen}>
           <SheetTrigger
             render={
@@ -89,7 +89,7 @@ export function Navbar() {
 
           <SheetContent
             side="right"
-            className="border-white/10 bg-[#111113] text-white"
+            className="border-white/10 bg-[#111113] text-white z-[9999]"
           >
             <SheetHeader>
               <SheetTitle className="text-left text-white">
@@ -97,7 +97,7 @@ export function Navbar() {
               </SheetTitle>
             </SheetHeader>
 
-            <nav className="mt-6 flex flex-col gap-2 px-4">
+            <nav className="mt-6 flex flex-col gap-2 px-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
@@ -120,7 +120,7 @@ export function Navbar() {
               </Link>
 
               <Link
-                href="/get-started"
+                href="/sign-up"
                 onClick={() => setOpen(false)}
                 className="mt-2 flex items-center justify-center rounded-lg bg-[#5c53fe] px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-[#6c63ff]"
               >
