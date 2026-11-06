@@ -8,6 +8,11 @@ import { signIn, signUp } from "@/lib/auth-client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  BriefcaseBusiness,
+  ShieldCheck,
+  UserSearch,
+} from "lucide-react";
 
 const inputClass =
   "h-10 rounded-lg border-white/15 bg-[#101010] text-xs text-white placeholder:text-white/40 focus-visible:border-[#5c53fe]/70 focus-visible:ring-[#5c53fe]/25 sm:h-11 sm:text-sm";
@@ -201,6 +206,7 @@ export function SignUpForm() {
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [role, setRole] = React.useState("seeker");
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -215,7 +221,12 @@ export function SignUpForm() {
 
     setLoading(true);
 
-    const { error: authError } = await signUp.email({ name, email, password });
+    const { error: authError } = await signUp.email({
+      name,
+      email,
+      password,
+      role,
+    });
 
     if (authError) {
       setError(authError.message ?? "Unable to create your account.");
@@ -267,6 +278,42 @@ export function SignUpForm() {
             onChange={(e) => setName(e.target.value)}
             className={inputClass}
           />
+        </div>
+
+        {/* Account type — saved to better-auth user as `role` */}
+        <div className="flex flex-col gap-1.5">
+          <Label className="text-xs text-white/70">Account type</Label>
+          <div role="radiogroup" aria-label="Account type" className="grid grid-cols-3 gap-2">
+            {[
+              { value: "seeker", label: "Seeker", icon: UserSearch },
+              { value: "recruiter", label: "Recruiter", icon: BriefcaseBusiness },
+              { value: "admin", label: "Admin", icon: ShieldCheck },
+            ].map((option) => (
+              <label key={option.value} className="cursor-pointer">
+                <input
+                  type="radio"
+                  name="role"
+                  value={option.value}
+                  checked={role === option.value}
+                  onChange={() => setRole(option.value)}
+                  className="peer sr-only"
+                />
+                <span
+                  className={
+                    "flex flex-col items-center gap-1.5 rounded-lg border px-2 py-3 text-center transition-colors " +
+                    (role === option.value
+                      ? "border-[#5c53fe] bg-[#5c53fe]/10 text-white"
+                      : "border-white/15 bg-[#101010] text-white/60 hover:border-white/30")
+                  }
+                >
+                  <option.icon className="size-4" aria-hidden="true" />
+                  <span className="text-[11px] font-medium leading-none">
+                    {option.label}
+                  </span>
+                </span>
+              </label>
+            ))}
+          </div>
         </div>
 
         <div className="flex flex-col gap-1.5">

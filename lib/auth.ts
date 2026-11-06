@@ -1,26 +1,28 @@
-import { betterAuth } from "better-auth"
-import { MongoClient } from "mongodb"
-import { mongodbAdapter } from "@better-auth/mongo-adapter"
+import { betterAuth } from "better-auth";
+import { MongoClient } from "mongodb";
+import { mongodbAdapter } from "@better-auth/mongo-adapter";
 
-const client = new MongoClient(process.env.MONGO_DB_URI as string)
-const db = client.db("hireloop")
+const client = new MongoClient("mongodb://localhost:27017/database");
+const db = client.db("hireloop");
 
 export const auth = betterAuth({
   database: mongodbAdapter(db, {
     client,
   }),
 
-  emailAndPassword: {
-    enabled: true,
-  },
-
   user: {
     additionalFields: {
       role: {
-        type: ["admin", "seeker", "recruiter"],
-        input: false,
+        type: "string",
+        required: false,
+        defaultValue: "seeker",
+        input: true, // allow clients to set role at sign-up
       },
     },
+  },
+
+  emailAndPassword: {
+    enabled: true,
   },
 
   socialProviders: {
@@ -29,4 +31,4 @@ export const auth = betterAuth({
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     },
   },
-})
+});
