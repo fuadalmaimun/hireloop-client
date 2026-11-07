@@ -3,7 +3,7 @@
 import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { MenuIcon, LogOut, LayoutDashboard } from "lucide-react"
+import { MenuIcon, LogOut} from "lucide-react"
 
 import logo from "@/app/images/logo.png"
 import { Separator } from "@/components/ui/separator"

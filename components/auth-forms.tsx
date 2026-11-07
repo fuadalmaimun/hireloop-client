@@ -100,9 +100,8 @@ async function handleGoogleSignIn(
   }
 }
 
-// ========================================
+
 // SIGN IN FORM
-// ========================================
 
 export function SignInForm() {
   const router = useRouter()
@@ -270,9 +269,8 @@ export function SignInForm() {
   )
 }
 
-// ========================================
+
 // SIGN UP FORM
-// ========================================
 
 export function SignUpForm() {
   const router = useRouter()
