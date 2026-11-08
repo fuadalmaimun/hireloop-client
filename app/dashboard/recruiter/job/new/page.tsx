@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import type { JobFormFields } from "@/lib/types/job";
 import { createJob } from "@/lib/actions/jobs";
 
 type Option = { value: string; label: string };
@@ -45,22 +46,7 @@ const SALARY_PERIODS: Option[] = [
   { value: "year", label: "Per year" },
 ];
 
-export type JobForm = {
-  jobTitle: string;
-  location: string;
-  jobDescription: string;
-  jobType: string;
-  workplaceType: string;
-  experienceLevel: string;
-  skills: string;
-  openings: string;
-  salaryMin: string;
-  salaryMax: string;
-  salaryPeriod: string;
-  applicationDeadline: string;
-};
-
-const initialForm: JobForm = {
+export const initialForm: JobFormFields = {
   jobTitle: "",
   location: "",
   jobDescription: "",
@@ -81,9 +67,9 @@ const inputClass =
 
 export default function CreateJobPage() {
 
-  const [form, setForm] = React.useState<JobForm>(initialForm);
+  const [form, setForm] = React.useState<JobFormFields>(initialForm);
 
-  const setField = <K extends keyof JobForm>(field: K, value: JobForm[K]) => {
+  const setField = <K extends keyof JobFormFields>(field: K, value: JobFormFields[K]) => {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
