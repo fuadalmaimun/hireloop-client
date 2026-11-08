@@ -58,7 +58,7 @@ function Divider() {
   return (
     <div className="my-5 flex items-center gap-3">
       <span className="h-px flex-1 bg-white/10" />
-      <span className="text-[11px] text-white/35">or continue with</span>
+      {/* <span className="text-[11px] text-white/35">or continue with</span> */}
       <span className="h-px flex-1 bg-white/10" />
     </div>
   )
@@ -244,7 +244,7 @@ export function SignInForm() {
       <Divider />
 
       {/* Google Login */}
-      <button
+      {/* <button
         type="button"
         disabled={loading || googleLoading}
         onClick={() => void handleGoogleSignIn(setGoogleLoading, setError)}
@@ -253,7 +253,7 @@ export function SignInForm() {
         <GoogleIcon />
 
         {googleLoading ? "Connecting..." : "Sign in with Google"}
-      </button>
+      </button> */}
 
       {/* Sign Up Link */}
       <p className="mt-6 text-center text-xs text-white/50 sm:text-sm">
@@ -453,7 +453,7 @@ export function SignUpForm() {
           />
         </div>
 
-        {/* Submit */}
+        Submit
         <button
           type="submit"
           disabled={loading || googleLoading}
@@ -466,7 +466,7 @@ export function SignUpForm() {
       <Divider />
 
       {/* Google Signup */}
-      <button
+      {/* <button
         type="button"
         disabled={loading || googleLoading}
         onClick={() => void handleGoogleSignIn(setGoogleLoading, setError)}
@@ -475,7 +475,7 @@ export function SignUpForm() {
         <GoogleIcon />
 
         {googleLoading ? "Connecting..." : "Sign up with Google"}
-      </button>
+      </button> */}
 
       {/* Terms */}
       <p className="mt-5 text-center text-[10px] leading-relaxed text-white/35 sm:text-[11px]">
