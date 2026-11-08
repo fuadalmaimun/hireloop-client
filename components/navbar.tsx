@@ -16,11 +16,7 @@ import {
 } from "@/components/ui/sheet"
 import { authClient } from "@/lib/auth-client"
 
-const navLinks = [
-  { href: "/jobs", label: "Browse Jobs" },
-  { href: "/company", label: "Company" },
-  { href: "/pricing", label: "Pricing" },
-]
+
 
 const linkClass =
   "text-[11px] font-medium text-neutral-300 transition-colors hover:text-white lg:text-xs"
@@ -31,9 +27,16 @@ export function Navbar() {
   const [signingOut, setSigningOut] = React.useState(false)
   const { data: session, isPending } = authClient.useSession()
 
+
+  const navLinks = [
+  { href: "/jobs", label: "Browse Jobs" },
+  { href: "/company", label: "Company" },
+  { href: "/pricing", label: "Pricing" },
+  { href: `/dashboard/${session?.user.role || "seeker"}`, label: "Dashboard" },
+]
+
   async function handleSignOut() {
     if (signingOut) return
-
     setSigningOut(true)
 
     try {

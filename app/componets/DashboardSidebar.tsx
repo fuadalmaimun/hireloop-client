@@ -22,7 +22,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { useSession } from "@/lib/auth-client"
+import { authClient } from "@/lib/auth-client"
+import Link from "next/link"
 
 type Role = "seeker" | "recruiter" | "admin"
 
@@ -78,11 +79,11 @@ const logoutItem = {
   icon: LogOut,
 }
 export function DashboardSidebar() {
-  const { data: session, isPending } = useSession()
+  const { data: session, isPending } = authClient.useSession()
 
-  if (isPending) {
-    return <Sidebar />
-  }
+if (isPending) {
+  return <Sidebar />
+}
 
   const userRole = session?.user?.role
 
@@ -106,7 +107,7 @@ export function DashboardSidebar() {
           <SidebarMenu>
             {menuItemsByRole[role]?.map((item) => (
               <SidebarMenuItem key={item.name}>
-                <SidebarMenuButton render={<a href={item.url} />}>
+                <SidebarMenuButton render={<Link href={item.url} />}>
                   <item.icon />
                   <span>{item.name}</span>
                 </SidebarMenuButton>
@@ -119,7 +120,7 @@ export function DashboardSidebar() {
         <SidebarGroup>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton render={<a href={logoutItem.url} />}>
+              <SidebarMenuButton render={<Link href={logoutItem.url} />}>
                 <logoutItem.icon />
                 <span>{logoutItem.name}</span>
               </SidebarMenuButton>
