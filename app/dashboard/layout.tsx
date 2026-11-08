@@ -3,9 +3,9 @@ import { DashboardSidebar } from "../componets/DashboardSidebar"
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <SidebarProvider>
+    <SidebarProvider className="bg-[#010109]">
       <DashboardSidebar />
-      <main>
+      <main className="min-w-0 flex-1">
         <SidebarTrigger />
         {children}
       </main>
