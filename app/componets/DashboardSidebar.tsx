@@ -10,7 +10,6 @@ import {
   Settings,
   Users,
   Wallet,
-  type LucideIcon,
 } from "lucide-react"
 import {
   Sidebar,
@@ -24,14 +23,7 @@ import {
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
 import Link from "next/link"
-
-type Role = "seeker" | "recruiter" | "admin"
-
-interface MenuItem {
-  name: string
-  url: string
-  icon: LucideIcon
-}
+import type { MenuItem, Role } from "@/lib/types/dashboard"
 
 // Based on the `HL 2.0/Sidebar` component in the Figma file (Role variants)
 const menuItemsByRole: Record<Role, MenuItem[]> = {

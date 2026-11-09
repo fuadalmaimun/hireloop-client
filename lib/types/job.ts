@@ -5,6 +5,7 @@ export type JobOption = {
   label: string;
 };
 
+export type JobStatus = "Active" | "Closed";
 
 export interface JobFormFields {
   jobTitle: string;
@@ -21,13 +22,12 @@ export interface JobFormFields {
   applicationDeadline: string;
 }
 
-
 export interface JobFormData extends JobFormFields {
   _id: string;
   ref: string;
-  salary: string,
+  salary: string;
   companyName: string;
   category: string;
-  status: "Active" | "Closed";
+  status: JobStatus;
   datePosted: string;
 }

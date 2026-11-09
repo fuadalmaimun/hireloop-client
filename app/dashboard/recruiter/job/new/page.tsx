@@ -17,34 +17,17 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import type { JobFormFields } from "@/lib/types/job";
 import { createJob } from "@/lib/actions/jobs";
-
-type Option = { value: string; label: string };
-
-const JOB_TYPES: Option[] = [
-  { value: "full-time", label: "Full-time" },
-  { value: "part-time", label: "Part-time" },
-  { value: "contract", label: "Contract" },
-  { value: "freelance", label: "Freelance" },
-  { value: "internship", label: "Internship" },
-];
-
-const WORKPLACE_TYPES: Option[] = [
-  { value: "on-site", label: "On-site" },
-  { value: "hybrid", label: "Hybrid" },
-  { value: "remote", label: "Remote" },
-];
-
-const EXPERIENCE_LEVELS: Option[] = [
-  { value: "entry", label: "Entry level" },
-  { value: "mid", label: "Mid level" },
-  { value: "senior", label: "Senior" },
-  { value: "lead", label: "Lead / Principal" },
-];
-
-const SALARY_PERIODS: Option[] = [
-  { value: "month", label: "Per month" },
-  { value: "year", label: "Per year" },
-];
+import {
+  EXPERIENCE_LEVELS,
+  JOB_TYPES,
+  SALARY_PERIODS,
+  WORKPLACE_TYPES,
+} from "@/lib/constants/job-options";
+import {
+  darkCardClass,
+  inputClass,
+  textareaClass,
+} from "@/lib/ui-styles";
 
 export const initialForm: JobFormFields = {
   jobTitle: "",
@@ -60,9 +43,6 @@ export const initialForm: JobFormFields = {
   salaryPeriod: "month",
   applicationDeadline: "",
 };
-
-const inputClass =
-  "h-10 rounded-lg border-white/15 bg-[#0d0d10] text-sm text-white placeholder:text-white/30 focus-visible:border-[#5c53fe]/70 focus-visible:ring-[#5c53fe]/25";
 
 export default function CreateJobPage() {
 
@@ -109,7 +89,7 @@ export default function CreateJobPage() {
 
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           {/* Job details card — Figma dashboard cards: #141418 + white/10 border */}
-          <section className="rounded-xl border border-white/10 bg-[#141418] p-5 sm:p-6">
+          <section className={`${darkCardClass} p-5 sm:p-6`}>
             <h2 className="font-manrope text-base font-semibold">Job details</h2>
 
             <div className="mt-5 space-y-4">
@@ -138,7 +118,7 @@ export default function CreateJobPage() {
                   rows={4}
                   value={form.jobDescription}
                   onChange={(e) => setField("jobDescription", e.target.value)}
-                  className="min-h-32 rounded-lg border-white/15 bg-[#0d0d10] text-sm text-white placeholder:text-white/30 focus-visible:border-[#5c53fe]/70 focus-visible:ring-[#5c53fe]/25"
+                  className={textareaClass}
                 />
               </div>
 
@@ -243,7 +223,7 @@ export default function CreateJobPage() {
           </section>
 
           {/* Requirements card */}
-          <section className="rounded-xl border border-white/10 bg-[#141418] p-5 sm:p-6">
+          <section className={`${darkCardClass} p-5 sm:p-6`}>
             <h2 className="font-manrope text-base font-semibold">Requirements</h2>
 
             <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -303,7 +283,7 @@ export default function CreateJobPage() {
           </section>
 
           {/* Compensation card */}
-          <section className="rounded-xl border border-white/10 bg-[#141418] p-5 sm:p-6">
+          <section className={`${darkCardClass} p-5 sm:p-6`}>
             <h2 className="font-manrope text-base font-semibold">
               Compensation
             </h2>

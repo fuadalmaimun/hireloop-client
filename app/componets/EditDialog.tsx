@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { Pencil } from "lucide-react"
-import { toast } from "sonner"
+import { toast } from "@/components/ui/toast"
 
 import {
   Dialog,
@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import type { JobFormData } from "@/lib/types/job"
 import { updateJob } from "@/lib/actions/jobs"
+import { useRouter } from "next/navigation"
 
 export function EditJobDialog({ job }: { job: JobFormData }) {
   const [open, setOpen] = useState(false)
@@ -24,6 +25,7 @@ export function EditJobDialog({ job }: { job: JobFormData }) {
   const [formData, setFormData] = useState<JobFormData>({
     ...job,
   })
+  const router = useRouter()
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -39,13 +41,13 @@ export function EditJobDialog({ job }: { job: JobFormData }) {
   const handleSubmit = async () => {
     setLoading(true)
 
+    
+
     try {
       await updateJob(job._id, formData)
-      toast.success("Job updated successfully")
       setOpen(false)
-      window.location.reload()
     } catch {
-      toast.error("Failed to update job")
+      toast.add({ title: "Failed to update job", type: "error" })
     } finally {
       setLoading(false)
     }
@@ -53,10 +55,7 @@ export function EditJobDialog({ job }: { job: JobFormData }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
-        type="button"
-        className="rounded-md p-2 hover:bg-white/10"
-      >
+      <DialogTrigger type="button" className="rounded-md p-2 hover:bg-white/10">
         <Pencil className="h-4 w-4" />
       </DialogTrigger>
 
@@ -66,14 +65,9 @@ export function EditJobDialog({ job }: { job: JobFormData }) {
         </DialogHeader>
 
         <div className="space-y-4">
-
           <div>
             <label className="mb-2 block text-sm">Job Reference</label>
-            <Input
-              name="ref"
-              value={formData.ref}
-              onChange={handleChange}
-            />
+            <Input name="ref" value={formData.ref} onChange={handleChange} />
           </div>
 
           <div>
@@ -192,7 +186,6 @@ export function EditJobDialog({ job }: { job: JobFormData }) {
           >
             {loading ? "Updating..." : "Update Job"}
           </Button>
-
         </div>
       </DialogContent>
     </Dialog>
