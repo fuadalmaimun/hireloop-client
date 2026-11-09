@@ -1,6 +1,5 @@
 "use client"
 
-import * as React from "react"
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,16 +14,32 @@ import {
 import { Trash2 } from "lucide-react"
 import type { JobFormData } from "@/lib/types/job"
 
-interface DeleteJobDialogProps {
-  job: JobFormData
-  onDelete: () => void
-}
+import { useState } from "react"
+import { toast } from "@/components/ui/toast"
+import { useRouter } from 'next/navigation'
+import { deleteJob } from "@/lib/actions/jobs"
 
-export function DeleteJobDialog({ job, onDelete }: DeleteJobDialogProps) {
-  const jobIdentifier = job?._id
+export function DeleteJobDialog({ job }: { job: JobFormData }) {
+  const [open, setOpen] = useState(false)
+  const router = useRouter()
+
+  const handleDelete = async () => {
+    const res = await deleteJob(job._id)
+    console.log(`Deleting job with ID: ${job._id}`, res)
+
+    if (res.deletedCount > 0) {
+      setOpen(false)
+      toast.add({
+        title: "Job deleted",
+      })
+        router.refresh()
+    }
+  }
+
+
 
   return (
-    <AlertDialog>
+    <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger
         aria-label="Delete job"
         className="inline-flex size-8 items-center justify-center rounded-md p-2 text-white/50 transition-colors hover:bg-[#ef4444]/10 hover:text-[#f87171]"
@@ -40,8 +55,8 @@ export function DeleteJobDialog({ job, onDelete }: DeleteJobDialogProps) {
           <AlertDialogDescription className="text-sm text-[#a0a0ab]">
             This action cannot be undone. This will permanently delete this job
             post
-            {jobIdentifier ? ` (Ref: ${jobIdentifier})` : ""} and remove its
-            data from our servers.
+            {job._id ? ` (Ref: ${job._id})` : ""} and remove its data from our
+            servers.
           </AlertDialogDescription>
         </AlertDialogHeader>
 
@@ -50,7 +65,7 @@ export function DeleteJobDialog({ job, onDelete }: DeleteJobDialogProps) {
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
-            onClick={onDelete}
+            onClick={handleDelete}
             className="bg-[#ef4444] text-white hover:bg-[#dc2626]"
           >
             Yes, delete

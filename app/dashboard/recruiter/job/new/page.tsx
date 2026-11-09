@@ -57,7 +57,6 @@ export const initialForm: JobFormFields = {
   openings: "1",
   salaryMin: "",
   salaryMax: "",
-
   salaryPeriod: "month",
   applicationDeadline: "",
 };

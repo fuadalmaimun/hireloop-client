@@ -1,0 +1,364 @@
+"use client"
+
+import { useState } from "react"
+import { CalendarDays, Eye, PenLine, Search } from "lucide-react"
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { DeleteJobDialog } from "@/app/componets/DeleteDialog"
+import type { JobFormData } from "@/lib/types/job"
+import { EditJobDialog } from "./EditDialog"
+
+const CATEGORY_LIST = ["Design", "Engineering", "Marketing"] as const
+
+const selectClass =
+  "h-11 rounded-lg border-white/15 bg-[#0d0d10] px-2 text-sm text-white focus-visible:border-[#5c53fe]/70 focus-visible:ring-[#5c53fe]/25 sm:w-48"
+
+function StatusBadge({ status }: { status: JobFormData["status"] }) {
+  const active = status === "Active"
+
+
+  return (
+    <span
+      className={
+        "inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-medium " +
+        (active
+          ? "border-[#22c55e] bg-[#22c55e]/10 text-[#22c55e]"
+          : "border-white/10 bg-[#a1a4aa]/15 text-[#a0a0ab]")
+      }
+    >
+      <span
+        className={
+          "size-1.5 rounded-full " + (active ? "bg-[#22c55e]" : "bg-[#a1a4aa]")
+        }
+        aria-hidden="true"
+      />
+      {status}
+    </span>
+  )
+}
+
+function CategoryBadge({ category }: { category: string }) {
+  return (
+    <span className="inline-flex w-fit items-center rounded-full border border-white/10 bg-[#1a1a1f] px-3 py-1 text-[11px] text-[#ededef]">
+      {category}
+    </span>
+  )
+}
+
+function CompanyAvatar({ name }: { name?: string }) {
+  const displayName = name || "Unknown"
+
+  return (
+    <span className="flex min-w-0 items-center gap-3">
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#222228] text-xs font-semibold text-[#ededef]">
+        {displayName.charAt(0).toUpperCase()}
+      </span>
+      <span className="truncate text-sm text-[#ededef]">
+        {displayName}
+      </span>
+    </span>
+  )
+}
+
+function ActionButtons({ job }: { job: JobFormData }) {
+  return (
+    <div className="flex shrink-0 items-center gap-1">
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        aria-label="View job"
+        className="text-white/50 hover:bg-white/10 hover:text-white"
+      >
+        <Eye />
+      </Button>
+
+    <EditJobDialog job={job} />
+
+      <DeleteJobDialog job={job} />
+    </div>
+  )
+}
+
+function formatDate(iso: string) {
+  if (!iso) return "N/A"
+
+  return new Date(iso + "T00:00:00").toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  })
+}
+
+export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
+  const [search, setSearch] = useState("")
+  const [statusFilter, setStatusFilter] = useState("all")
+  const [categoryFilter, setCategoryFilter] = useState("all")
+  const [pillFilter, setPillFilter] = useState<"all" | "Active" | "Closed">(
+    "all"
+  )
+
+  const filtered = jobs.filter((job) => {
+    const q = search.trim().toLowerCase()
+
+    if (pillFilter !== "all" && job.status !== pillFilter) return false
+
+    if (statusFilter === "active" && job.status !== "Active") return false
+    if (statusFilter === "closed" && job.status !== "Closed") return false
+
+    if (categoryFilter !== "all" && job.category !== categoryFilter)
+      return false
+
+    if (q) {
+      const haystack = [
+        job.jobTitle,
+        job.ref,
+        job.companyName,
+        job.category,
+        job.jobType,
+      ]
+        .join(" ")
+        .toLowerCase()
+
+      if (!haystack.includes(q)) return false
+    }
+
+    return true
+  })
+
+  const activeCount = jobs.filter((job) => job.status === "Active").length
+  const closedCount = jobs.filter((job) => job.status === "Closed").length
+
+  return (
+    <>
+      {/* Filters */}
+      <div className="mt-7 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+          <div className="flex flex-col gap-2">
+            <p className="font-mono text-xs tracking-[0.2em] text-white/40 uppercase">
+              Status
+            </p>
+
+            <Select
+              value={statusFilter}
+              onValueChange={(value) => setStatusFilter(value as string)}
+            >
+              <SelectTrigger className={selectClass}>
+                <SelectValue>
+                  {statusFilter === "all"
+                    ? "All Statuses"
+                    : statusFilter === "active"
+                      ? "Active"
+                      : "Closed"}
+                </SelectValue>
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="all">All Statuses</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="closed">Closed</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex flex-col gap-2">
+            <p className="font-mono text-xs tracking-[0.2em] text-white/40 uppercase">
+              Category
+            </p>
+
+            <Select
+              value={categoryFilter}
+              onValueChange={(value) => setCategoryFilter(value as string)}
+            >
+              <SelectTrigger className={selectClass}>
+                <SelectValue>
+                  {categoryFilter === "all"
+                    ? "All Categories"
+                    : categoryFilter}
+                </SelectValue>
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="all">All Categories</SelectItem>
+
+                {CATEGORY_LIST.map((category) => (
+                  <SelectItem key={category} value={category}>
+                    {category}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        {/* Quick Filter */}
+        <div className="flex flex-col gap-2">
+          <p className="font-mono text-xs tracking-[0.2em] text-white/40 uppercase">
+            Quick filter
+          </p>
+
+          <div className="flex w-fit items-center gap-1 rounded-lg border border-white/10 bg-[#0d0d10] p-1.5">
+            {(
+              [
+                ["all", "All"],
+                ["Active", `Active (${activeCount})`],
+                ["Closed", `Closed (${closedCount})`],
+              ] as const
+            ).map(([value, label]) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => setPillFilter(value)}
+                className={
+                  "flex h-8 items-center rounded-md px-4 text-xs font-medium transition-colors " +
+                  (pillFilter === value
+                    ? "bg-[#5c53fe] text-white"
+                    : "text-white/55 hover:text-white")
+                }
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Search */}
+      <div className="relative mt-6">
+        <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-white/30" />
+
+        <Input
+          type="search"
+          placeholder="Search by job title, ref, or company…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          className="h-11 rounded-lg border-white/15 bg-[#0d0d10] pr-4 pl-10 text-sm text-white placeholder:text-white/30 focus-visible:border-[#5c53fe]/70 focus-visible:ring-[#5c53fe]/25"
+        />
+      </div>
+
+      {/* Jobs Table */}
+      <section className="mt-6 overflow-hidden rounded-xl border border-white/10 bg-[#141418]">
+        {/* Desktop Table */}
+        <div className="hidden min-w-0 lg:block">
+          <div className="grid grid-cols-[1.7fr_1.4fr_1.1fr_0.9fr_1.1fr_1fr_0.9fr] items-center border-b border-white/[0.07] bg-[#1a1a1f] px-5 py-4">
+            {[
+              "Title",
+              "Company",
+              "Category",
+              "Type",
+              "Date Posted",
+              "Status",
+              "Actions",
+            ].map((title) => (
+              <span
+                key={title}
+                className="text-xs font-medium tracking-wide text-[#a0a0ab] uppercase"
+              >
+                {title}
+              </span>
+            ))}
+          </div>
+
+          {filtered.map((jobItem) => (
+            <div
+              key={jobItem._id || jobItem.ref}
+              className="grid grid-cols-[1.7fr_1.4fr_1.1fr_0.9fr_1.1fr_1fr_0.9fr] items-center border-t border-white/[0.07] px-5 py-4 first:border-t-0"
+            >
+              <div className="flex min-w-0 flex-col gap-1">
+                <span className="truncate text-sm font-medium text-[#ededef]">
+                  {jobItem.jobTitle}
+                </span>
+
+                <span className="text-xs text-[#a0a0ab]">
+                  Ref: {jobItem.ref}
+                </span>
+              </div>
+
+              <CompanyAvatar name={jobItem.companyName} />
+
+              <CategoryBadge category={jobItem.category} />
+
+              <span className="text-sm text-[#a0a0ab]">
+                {jobItem.jobType}
+              </span>
+
+              <span className="text-sm text-[#a0a0ab]">
+                {formatDate(jobItem.datePosted)}
+              </span>
+
+              <StatusBadge status={jobItem.status} />
+
+              <div className="flex justify-end pr-1">
+                <ActionButtons job={jobItem} />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Mobile Cards */}
+        <div className="flex flex-col divide-y divide-white/[0.07] lg:hidden">
+          {filtered.map((jobItem) => (
+            <article
+              key={jobItem._id || jobItem.ref}
+              className="p-5 sm:p-6"
+            >
+              <div className="flex items-start justify-between gap-4">
+                <div className="flex min-w-0 flex-col gap-1">
+                  <h3 className="truncate text-sm font-semibold text-[#ededef]">
+                    {jobItem.jobTitle}
+                  </h3>
+
+                  <span className="text-xs text-[#a0a0ab]">
+                    Ref: {jobItem.ref}
+                  </span>
+                </div>
+
+                <StatusBadge status={jobItem.status} />
+              </div>
+
+              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-3 text-xs text-[#a0a0ab]">
+                <CompanyAvatar name={jobItem.companyName} />
+
+                <CategoryBadge category={jobItem.category} />
+
+                <span className="flex items-center gap-1.5">
+                  <CalendarDays className="size-3.5" />
+                  {formatDate(jobItem.datePosted)}
+                </span>
+              </div>
+
+              <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/[0.07] pt-3">
+                <span className="text-xs text-[#a0a0ab]">
+                  {jobItem.jobType} · {jobItem.workplaceType}
+                </span>
+
+                <ActionButtons job={jobItem} />
+              </div>
+            </article>
+          ))}
+        </div>
+
+        {/* Empty State */}
+        {filtered.length === 0 && (
+          <div className="px-5 py-12 text-center text-sm text-white/45">
+            {jobs.length === 0
+              ? "No job posts found."
+              : "No job posts match the current filters."}
+          </div>
+        )}
+      </section>
+
+      {/* Result Count */}
+      <p className="mt-4 px-1 text-xs text-white/35">
+        Showing {filtered.length} of {jobs.length} job posts
+      </p>
+    </>
+  )
+}
