@@ -14,106 +14,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { JobFormData } from "@/lib/types/job";
-
-
-
-const DUMMY_JOBS: JobFormData[] = [
-  {
-    ref: "HL-90210",
-    jobTitle: "Senior Product Designer",
-    location: "Dhaka, Bangladesh",
-    jobDescription: "Lead the end-to-end design process for our core platform.",
-    jobType: "full-time",
-    workplaceType: "hybrid",
-    experienceLevel: "senior",
-    skills: "Figma, Design Systems, Prototyping",
-    openings: "1",
-    salaryMin: "8000",
-    salaryMax: "12000",
-    salaryPeriod: "month",
-    applicationDeadline: "2026-11-30",
-    companyName: "Nexus Lab",
-    category: "Design",
-    status: "Active",
-    datePosted: "2026-10-24",
-  },
-  {
-    ref: "HL-88231",
-    jobTitle: "Full-stack Engineer",
-    location: "Remote",
-    jobDescription: "Build and ship features across the hiring pipeline.",
-    jobType: "contract",
-    workplaceType: "remote",
-    experienceLevel: "mid",
-    skills: "React, Node.js, PostgreSQL",
-    openings: "2",
-    salaryMin: "4000",
-    salaryMax: "6000",
-    salaryPeriod: "month",
-    applicationDeadline: "2026-11-20",
-    companyName: "Quantum",
-    category: "Engineering",
-    status: "Active",
-    datePosted: "2026-10-22",
-  },
-  {
-    ref: "HL-11022",
-    jobTitle: "Marketing Director",
-    location: "Singapore",
-    jobDescription: "Own growth marketing across APAC markets.",
-    jobType: "full-time",
-    workplaceType: "on-site",
-    experienceLevel: "lead",
-    skills: "Growth, SEO, Brand",
-    openings: "1",
-    salaryMin: "9000",
-    salaryMax: "14000",
-    salaryPeriod: "month",
-    applicationDeadline: "2026-10-31",
-    companyName: "Vanguard",
-    category: "Marketing",
-    status: "Closed",
-    datePosted: "2026-10-15",
-  },
-  {
-    ref: "HL-99032",
-    jobTitle: "Backend Architect",
-    location: "Dhaka, Bangladesh",
-    jobDescription: "Design the event-driven backbone of the platform.",
-    jobType: "full-time",
-    workplaceType: "on-site",
-    experienceLevel: "senior",
-    skills: "Go, Kafka, MongoDB",
-    openings: "1",
-    salaryMin: "10000",
-    salaryMax: "15000",
-    salaryPeriod: "month",
-    applicationDeadline: "2026-12-15",
-    companyName: "Circuit",
-    category: "Engineering",
-    status: "Active",
-    datePosted: "2026-10-10",
-  },
-  {
-    ref: "HL-77411",
-    jobTitle: "Content Strategist",
-    location: "Remote",
-    jobDescription: "Shape editorial voice and the careers blog.",
-    jobType: "freelance",
-    workplaceType: "remote",
-    experienceLevel: "mid",
-    skills: "Copywriting, SEO, Editorial",
-    openings: "1",
-    salaryMin: "1500",
-    salaryMax: "2500",
-    salaryPeriod: "month",
-    applicationDeadline: "2026-11-05",
-    companyName: "Quantum",
-    category: "Marketing",
-    status: "Closed",
-    datePosted: "2026-09-28",
-  },
-];
+import { getJobs } from "@/lib/api/jobs";
 
 const CATEGORY_LIST = [
   "Design",
@@ -123,8 +24,6 @@ const CATEGORY_LIST = [
 
 const selectClass =
   "h-10 rounded-lg border-white/15 bg-[#0d0d10] text-sm text-white focus-visible:border-[#5c53fe]/70 focus-visible:ring-[#5c53fe]/25 sm:w-44";
-
-// ---------------------------------------------------------------------------
 
 function StatusBadge({ status }: { status: JobFormData["status"] }) {
   const active = status === "Active";
@@ -157,13 +56,16 @@ function CategoryBadge({ category }: { category: string }) {
   );
 }
 
-function CompanyAvatar({ name }: { name: string }) {
+function CompanyAvatar({ name }: { name?: string }) {
+
+  const displayName = name || "Unknown";
+  
   return (
     <span className="flex items-center gap-2.5">
       <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#222228] text-[11px] font-semibold text-[#ededef]">
-        {name.charAt(0).toUpperCase()}
+        {displayName.charAt(0).toUpperCase()}
       </span>
-      <span className="text-sm text-[#ededef]">{name}</span>
+      <span className="text-sm text-[#ededef]">{displayName}</span>
     </span>
   );
 }
@@ -208,17 +110,30 @@ function formatDate(iso: string) {
 }
 
 export default function ManageJobsPage() {
-  // Demo data lives in state so delete works without a backend
-  const [jobs, setJobs] = React.useState<JobFormData[]>(DUMMY_JOBS);
+
+  const [jobs, setJobs] = React.useState<JobFormData[]>([]);
+  const [loading, setLoading] = React.useState(true);
+
   const [statusFilter, setStatusFilter] = React.useState("all");
   const [categoryFilter, setCategoryFilter] = React.useState("all");
   const [search, setSearch] = React.useState("");
   const [pillFilter, setPillFilter] = React.useState<"all" | "Active" | "Closed">("all");
 
+  React.useEffect(() => {
+    getJobs()
+      .then((data) => {
+        setJobs(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch jobs:", err);
+        setLoading(false);
+      });
+  }, []);
+
   const deleteJob = (ref: string) => {
     setJobs((prev) => prev.filter((job) => job.ref !== ref));
     // TODO: call API to delete the job post once backend is ready
-    // e.g. deleteJobPost(ref)
   };
 
   const filtered = jobs.filter((job) => {
@@ -238,10 +153,17 @@ export default function ManageJobsPage() {
   const activeCount = jobs.filter((job) => job.status === "Active").length;
   const closedCount = jobs.filter((job) => job.status === "Closed").length;
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#010109] text-white flex items-center justify-center">
+        <p className="text-sm text-white/50">Loading jobs...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#010109] text-white">
       <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        {/* Header Section — Figma "Manage Jobs" heading + Create Job button */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h1 className="font-manrope text-2xl font-bold tracking-tight sm:text-3xl">
@@ -263,7 +185,7 @@ export default function ManageJobsPage() {
           </Button>
         </div>
 
-        {/* Filters Section — two selects + Active/Closed segmented pills */}
+        {/* Filters Section */}
         <div className="mt-6 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="flex flex-col gap-1.5">
@@ -276,8 +198,8 @@ export default function ManageJobsPage() {
                     {statusFilter === "active"
                       ? "Active"
                       : statusFilter === "closed"
-                        ? "Closed"
-                        : "All Statuses"}
+                      ? "Closed"
+                      : "All Statuses"}
                   </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
@@ -357,9 +279,7 @@ export default function ManageJobsPage() {
 
         {/* Data Table Section */}
         <section className="mt-5 overflow-hidden rounded-xl border border-white/10 bg-[#141418]">
-          {/* ===== Desktop table (lg and up) ===== */}
           <div className="hidden min-w-0 lg:block">
-            {/* Header row — #1a1a1f like the Figma table header */}
             <div className="grid grid-cols-[1.7fr_1.4fr_1.1fr_0.9fr_1.1fr_1fr_0.9fr] items-center border-b border-white/[0.07] bg-[#1a1a1f] px-4 py-3">
               <span className="text-xs font-medium uppercase tracking-wide text-[#a0a0ab]">Title</span>
               <span className="text-xs font-medium uppercase tracking-wide text-[#a0a0ab]">Company</span>
@@ -370,9 +290,9 @@ export default function ManageJobsPage() {
               <span className="text-right text-xs font-medium uppercase tracking-wide text-[#a0a0ab]">Actions</span>
             </div>
 
-            {filtered.map((job, index) => (
+            {filtered.map((jobItem, index) => (
               <div
-                key={job.ref}
+                key={index}
                 className={
                   "grid grid-cols-[1.7fr_1.4fr_1.1fr_0.9fr_1.1fr_1fr_0.9fr] items-center px-4 py-3 " +
                   (index > 0 ? "border-t border-white/[0.07]" : "")
@@ -380,27 +300,17 @@ export default function ManageJobsPage() {
               >
                 <div className="flex min-w-0 flex-col gap-0.5">
                   <span className="truncate text-sm font-medium text-[#ededef]">
-                    {job.jobTitle}
+                    {jobItem.jobTitle}
                   </span>
-                  <span className="text-xs text-[#a0a0ab]">Ref: {job.ref}</span>
+                  <span className="text-xs text-[#a0a0ab]">Ref: {jobItem.ref}</span>
                 </div>
-                <CompanyAvatar name={job.companyName} />
-                <div><CategoryBadge category={job.category} /></div>
+                <CompanyAvatar name={jobItem.companyName} />
+                <div><CategoryBadge category={jobItem.category} /></div>
                 <span className="text-sm text-[#a0a0ab]">
-                  {job.jobType === "full-time"
-                    ? "Full-time"
-                    : job.jobType === "contract"
-                      ? "Contract"
-                      : job.jobType === "freelance"
-                        ? "Freelance"
-                        : job.jobType === "part-time"
-                          ? "Part-time"
-                          : job.jobType === "internship"
-                            ? "Internship"
-                            : job.jobType}
+                  {jobItem.jobType}
                 </span>
-                <span className="text-sm text-[#a0a0ab]">{formatDate(job.datePosted)}</span>
-                <div><StatusBadge status={job.status} /></div>
+                <span className="text-sm text-[#a0a0ab]">{formatDate(jobItem.datePosted)}</span>
+                <div><StatusBadge status={jobItem.status} /></div>
                 <div className="flex justify-end">
                   <ActionButtons />
                 </div>
@@ -408,45 +318,34 @@ export default function ManageJobsPage() {
             ))}
           </div>
 
-          {/* ===== Mobile/tablet cards (below lg) ===== */}
+          {/* Mobile/tablet cards */}
           <div className="flex flex-col divide-y divide-white/[0.07] lg:hidden">
-            {filtered.map((job) => (
-              <article key={job.ref} className="p-4 sm:p-5">
+            {filtered.map((jobItem, id) => (
+              <article key={id} className="p-4 sm:p-5">
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex min-w-0 flex-col gap-0.5">
                     <h3 className="truncate text-sm font-semibold text-[#ededef]">
-                      {job.jobTitle}
+                      {jobItem.jobTitle}
                     </h3>
-                    <span className="text-xs text-[#a0a0ab]">Ref: {job.ref}</span>
+                    <span className="text-xs text-[#a0a0ab]">Ref: {jobItem.ref}</span>
                   </div>
-                  <StatusBadge status={job.status} />
+                  <StatusBadge status={jobItem.status} />
                 </div>
 
                 <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-[#a0a0ab]">
-                  <CompanyAvatar name={job.companyName} />
-                  <CategoryBadge category={job.category} />
+                  <CompanyAvatar name={jobItem.companyName} />
+                  <CategoryBadge category={jobItem.category} />
                   <span className="flex items-center gap-1.5">
                     <CalendarDays className="size-3.5" aria-hidden="true" />
-                    {formatDate(job.datePosted)}
+                    {formatDate(jobItem.datePosted)}
                   </span>
                 </div>
 
                 <div className="mt-3 flex items-center justify-between">
                   <span className="text-xs text-[#a0a0ab]">
-                    {job.jobType === "full-time"
-                      ? "Full-time"
-                      : job.jobType === "contract"
-                        ? "Contract"
-                        : job.jobType === "freelance"
-                          ? "Freelance"
-                          : job.jobType}{" "}
-                    · {job.workplaceType === "remote"
-                      ? "Remote"
-                      : job.workplaceType === "hybrid"
-                        ? "Hybrid"
-                        : "On-site"}
+                    {jobItem.jobType} · {jobItem.workplaceType}
                   </span>
-                  <ActionButtons  />
+                  <ActionButtons />
                 </div>
               </article>
             ))}
@@ -460,7 +359,7 @@ export default function ManageJobsPage() {
         </section>
 
         <p className="mt-3 text-xs text-white/35">
-          Showing {filtered.length} of {jobs.length} job posts (demo data)
+          Showing {filtered.length} of {jobs.length} job posts
         </p>
       </main>
     </div>
