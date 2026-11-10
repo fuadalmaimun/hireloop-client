@@ -3,6 +3,7 @@
 import * as React from "react"
 import Image from "next/image"
 import Link from "next/link"
+import { usePathname } from "next/navigation"
 import { MenuIcon, LogOut} from "lucide-react"
 
 import logo from "@/app/images/logo.png"
@@ -26,6 +27,13 @@ export function Navbar() {
 
   const [signingOut, setSigningOut] = React.useState(false)
   const { data: session, isPending } = authClient.useSession()
+
+  const pathname = usePathname()
+
+  // The dashboard has its own sidebar layout — the public navbar overlays it.
+  if (pathname.startsWith("/dashboard")) {
+    return null
+  }
 
 
   const navLinks = [

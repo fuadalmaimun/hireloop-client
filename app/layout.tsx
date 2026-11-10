@@ -3,6 +3,7 @@ import { Geist, Geist_Mono, Manrope, Space_Mono, Plus_Jakarta_Sans, Instrument_S
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils";
+import { Navbar } from "@/components/navbar";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'})
 
@@ -32,8 +33,10 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn("antialiased", fontMono.variable, "font-sans", geist.variable, manrope.variable, spaceMono.variable, plusJakarta.variable, instrumentSans.variable, interTight.variable)}
     >
-      <body>
-        <ThemeProvider>{children}</ThemeProvider>
+      <body className="bg-[#010109]">
+        <ThemeProvider>
+          <Navbar />
+          {children}</ThemeProvider>
       </body>
     </html>
   )

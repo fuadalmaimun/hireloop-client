@@ -4,6 +4,17 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* The dashboard is dark by design — pin the sidebar tokens here so the
+   sidebar never flashes white when the device/system theme is light. */
+[data-slot="sidebar-wrapper"] {
+    --sidebar: #141418;
+    --sidebar-foreground: #ededef;
+    --sidebar-accent: #222228;
+    --sidebar-accent-foreground: #ffffff;
+    --sidebar-border: #2a2a30;
+    --sidebar-ring: #5c53fe;
+}
+
 @theme inline {
     --font-heading: var(--font-sans);
     --font-sans: var(--font-sans);

@@ -9,6 +9,7 @@ export const getJobs = async (query = ''): Promise<JobFormData[]> => {
             "content-type": "application/json",
         },
     });
+    if (!response.ok) return [];
     return response.json();
 };
 
