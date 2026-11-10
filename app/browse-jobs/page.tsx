@@ -1,3 +1,4 @@
+import { getJobs } from "@/lib/api/jobs";
 import React from "react"
 
 const BrowseJob = async ({
@@ -6,9 +7,22 @@ const BrowseJob = async ({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }) => {
     const search = await searchParams;
-    console.log("Search Params", search);
+    const urlSearch = new URLSearchParams(search as Record<string, string>) 
+    const query = urlSearch.toString();
+    console.log("Search Params", query );
+    const jobs = await getJobs()
 
-  return <div>Browse Job</div>
+    return(
+      <>
+      <div>
+        <ul>
+          {jobs.map((job) =>  <li key={job._id}>
+            {job.jobTitle}
+          </li> )}
+        </ul>
+      </div>
+      </>
+    )
 }
 
 export default BrowseJob
