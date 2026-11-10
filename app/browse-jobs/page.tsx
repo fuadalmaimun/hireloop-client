@@ -1,28 +1,9 @@
-import { getJobs } from "@/lib/api/jobs";
-import React from "react"
+import { getJobs } from "@/lib/api/jobs"
+import type { JobFormData } from "@/lib/types/job"
+import { BrowseJobs } from "@/app/componets/BrowseJobs"
 
-const BrowseJob = async ({
-  searchParams,
-}: {
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-}) => {
-    const search = await searchParams;
-    const urlSearch = new URLSearchParams(search as Record<string, string>) 
-    const query = urlSearch.toString();
-    console.log("Search Params", query );
-    const jobs = await getJobs()
+export default async function BrowseJobsPage() {
+  const jobs: JobFormData[] = await getJobs()
 
-    return(
-      <>
-      <div>
-        <ul>
-          {jobs.map((job) =>  <li key={job._id}>
-            {job.jobTitle}
-          </li> )}
-        </ul>
-      </div>
-      </>
-    )
+  return <BrowseJobs jobs={jobs} />
 }
-
-export default BrowseJob
