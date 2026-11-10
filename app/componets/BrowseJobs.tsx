@@ -7,7 +7,6 @@ import {
   CATEGORY_LIST,
   EXPERIENCE_LEVELS,
   JOB_TYPES,
-  SALARY_PERIODS,
   WORKPLACE_TYPES,
 } from "@/lib/constants/job-options"
 import { darkCardClass, monoLabelClass } from "@/lib/ui-styles"
@@ -33,12 +32,24 @@ export function BrowseJobs({ jobs }: { jobs: JobFormData[] }) {
   const [jobType, setJobType] = useState("all")
   const [workplaceType, setWorkplaceType] = useState("all")
   const [experienceLevel, setExperienceLevel] = useState("all")
-  const [salaryPeriod, setSalaryPeriod] = useState("all")
   const [location, setLocation] = useState("all")
 
   const locations = Array.from(
     new Set(jobs.map((job) => job.location).filter(Boolean))
   ).sort()
+
+  // Job type and job category are mutually exclusive — picking one clears the other.
+  const handleCategoryChange = (value: string) => {
+    setCategory(value) // TODO: filter by category
+
+    if (value !== "all") setJobType("all")
+  }
+
+  const handleJobTypeChange = (value: string) => {
+    setJobType(value) // TODO: filter by job type
+
+    if (value !== "all") setCategory("all")
+  }
 
   // TODO: filter `jobs` by search + filters here (or set query params).
   const visibleJobs = jobs
@@ -73,7 +84,7 @@ export function BrowseJobs({ jobs }: { jobs: JobFormData[] }) {
             <button
               key={tab.value}
               type="button"
-              onClick={() => setCategory(tab.value)} // TODO: filter by category
+              onClick={() => handleCategoryChange(tab.value)}
               className={
                 "flex h-8 items-center rounded-md px-4 text-xs font-medium transition-colors " +
                 (category === tab.value
@@ -95,7 +106,7 @@ export function BrowseJobs({ jobs }: { jobs: JobFormData[] }) {
               <FilterSelect
                 label="Job type"
                 value={jobType}
-                onValueChange={(value) => setJobType(value)} // TODO: filter by job type
+                onValueChange={handleJobTypeChange}
                 options={JOB_TYPES}
                 allLabel="All types"
               />
@@ -114,14 +125,6 @@ export function BrowseJobs({ jobs }: { jobs: JobFormData[] }) {
                 onValueChange={(value) => setExperienceLevel(value)} // TODO: filter by experience
                 options={EXPERIENCE_LEVELS}
                 allLabel="All levels"
-              />
-
-              <FilterSelect
-                label="Salary period"
-                value={salaryPeriod}
-                onValueChange={(value) => setSalaryPeriod(value)} // TODO: filter by salary period
-                options={SALARY_PERIODS}
-                allLabel="Any period"
               />
 
               <FilterSelect
