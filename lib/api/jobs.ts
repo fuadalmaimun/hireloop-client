@@ -13,8 +13,8 @@ export const getJobs = async (query = ''): Promise<JobFormData[]> => {
     return response.json();
 };
 
-export const getDetailsPage = async (jobId: string) => {
-  const res = await fetch(`${BASE_URL}/jobs/${jobId}`)
+export const getDetailsPage = async (Id: string) => {
+  const res = await fetch(`${BASE_URL}/jobs/${Id}`)
   const job = await res.json()
   return job
 }

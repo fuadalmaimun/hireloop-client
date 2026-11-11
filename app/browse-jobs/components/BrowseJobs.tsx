@@ -1,23 +1,22 @@
+"use client"
 
-"use client";
+import { useEffect, useState, type FormEvent } from "react"
+import { useRouter } from "next/navigation"
 
-import { useEffect, useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { SearchInput } from "./SearchInput"
+import { FilterSelect } from "./FilterSelect"
 
-import { SearchInput } from "../../componets/SearchInput";
-import { FilterSelect } from "./FilterSelect";
-
-import { darkCardClass, monoLabelClass } from "@/lib/ui-styles";
+import { darkCardClass, monoLabelClass } from "@/lib/ui-styles"
 
 import {
   EXPERIENCE_LEVELS,
   JOB_TYPES,
   WORKPLACE_TYPES,
-} from "@/lib/constants/job-options";
+} from "@/lib/constants/job-options"
 
-import { getJobs } from "@/lib/api/jobs";
-import type { JobFormData } from "@/lib/types/job";
-import { JobCard } from "./JobCard";
+import { getJobs } from "@/lib/api/jobs"
+import type { JobFormData } from "@/lib/types/job"
+import { JobCard } from "./JobCard"
 
 const CATEGORY_TABS = [
   { label: "All Jobs", value: "all" },
@@ -25,20 +24,20 @@ const CATEGORY_TABS = [
   { label: "Design", value: "Design" },
   { label: "Marketing", value: "Marketing" },
   { label: "Content", value: "Content" },
-];
+]
 
 export function BrowseJobs({ jobs }: { jobs: JobFormData[] }) {
-  const router = useRouter();
+  const router = useRouter()
 
-  const [visibleJobs, setVisibleJobs] = useState(jobs);
+  const [visibleJobs, setVisibleJobs] = useState(jobs)
 
-  const [search, setSearch] = useState("");
-  const [submittedSearch, setSubmittedSearch] = useState("");
-  const [category, setCategory] = useState("all");
-  const [jobType, setJobType] = useState("all");
-  const [workplaceType, setWorkplaceType] = useState("all");
-  const [experienceLevel, setExperienceLevel] = useState("all");
-  const [location, setLocation] = useState("all");
+  const [search, setSearch] = useState("")
+  const [submittedSearch, setSubmittedSearch] = useState("")
+  const [category, setCategory] = useState("all")
+  const [jobType, setJobType] = useState("all")
+  const [workplaceType, setWorkplaceType] = useState("all")
+  const [experienceLevel, setExperienceLevel] = useState("all")
+  const [location, setLocation] = useState("all")
 
   const locations = Array.from(
     new Set(
@@ -46,52 +45,57 @@ export function BrowseJobs({ jobs }: { jobs: JobFormData[] }) {
         .map((job) => job.location)
         .filter((item): item is string => Boolean(item))
     )
-  ).sort();
+  ).sort()
 
   // Search submit
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setSubmittedSearch(search.trim());
-  };
+    event.preventDefault()
+    setSubmittedSearch(search.trim())
+  }
 
   // Category and job type
   const handleCategoryChange = (value: string) => {
-    setCategory(value);
+    setCategory(value)
 
     if (value !== "all") {
-      setJobType("all");
+      setJobType("all")
     }
-  };
+  }
 
   const handleJobTypeChange = (value: string) => {
-    setJobType(value);
+    setJobType(value)
 
     if (value !== "all") {
-      setCategory("all");
+      setCategory("all")
     }
-  };
+  }
 
   // Fetch and filter jobs
   useEffect(() => {
-    let active = true;
+    let active = true
 
-    const params = new URLSearchParams();
+    const params = new URLSearchParams()
+    if (submittedSearch) params.set("search", submittedSearch)
+    if (jobType !== "all") params.set("jobType", jobType)
 
-    if (submittedSearch) params.set("search", submittedSearch);
-    if (jobType !== "all") params.set("jobType", jobType);
     if (workplaceType !== "all") {
-      params.set("workplaceType", workplaceType);
+      params.set("workplaceType", workplaceType)
     }
 
-    const queryString = params.toString();
+    if (experienceLevel !== "all") {
+      params.set("experienceLevel", experienceLevel)
+    }
 
-    router.replace(
-      queryString ? `/browse-jobs?${queryString}` : "/browse-jobs"
-    );
+    if (location !== "all") {
+      params.set("location", location)
+    }
+    const queryString = params.toString()
+
+    router.replace(queryString ? `/browse-jobs?${queryString}` : "/browse-jobs")
 
     getJobs(queryString)
       .then((data) => {
-        if (!active) return;
+        if (!active) return
 
         const filteredJobs = data.filter(
           (job) =>
@@ -99,15 +103,15 @@ export function BrowseJobs({ jobs }: { jobs: JobFormData[] }) {
             (experienceLevel === "all" ||
               job.experienceLevel === experienceLevel) &&
             (location === "all" || job.location === location)
-        );
+        )
 
-        setVisibleJobs(filteredJobs);
+        setVisibleJobs(filteredJobs)
       })
-      .catch(console.error);
+      .catch(console.error)
 
     return () => {
-      active = false;
-    };
+      active = false
+    }
   }, [
     submittedSearch,
     category,
@@ -116,15 +120,14 @@ export function BrowseJobs({ jobs }: { jobs: JobFormData[] }) {
     experienceLevel,
     location,
     router,
-  ]);
+  ])
 
   return (
-    <div className="min-h-screen bg-[#010109] text-white">
+    <div className="min-h-screen mt-5  bg-[#010109] text-white">
       <main className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
-
         {/* Header */}
         <div className="mt-8">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-[#8b83ff]">
+          <p className="mb-2 text-xs font-semibold tracking-[0.25em] text-[#8b83ff] uppercase">
             Find your next opportunity
           </p>
 
@@ -179,7 +182,6 @@ export function BrowseJobs({ jobs }: { jobs: JobFormData[] }) {
 
         {/* Filters and Jobs */}
         <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[250px_minmax(0,1fr)]">
-
           {/* Sidebar */}
           <aside className={`${darkCardClass} h-fit rounded-2xl p-5`}>
             <div className="flex items-center justify-between">
@@ -188,13 +190,13 @@ export function BrowseJobs({ jobs }: { jobs: JobFormData[] }) {
               <button
                 type="button"
                 onClick={() => {
-                  setCategory("all");
-                  setJobType("all");
-                  setWorkplaceType("all");
-                  setExperienceLevel("all");
-                  setLocation("all");
-                  setSearch("");
-                  setSubmittedSearch("");
+                  setCategory("all")
+                  setJobType("all")
+                  setWorkplaceType("all")
+                  setExperienceLevel("all")
+                  setLocation("all")
+                  setSearch("")
+                  setSubmittedSearch("")
                 }}
                 className="text-xs font-medium text-[#8b83ff] hover:text-white"
               >
@@ -239,7 +241,6 @@ export function BrowseJobs({ jobs }: { jobs: JobFormData[] }) {
 
           {/* Job Results */}
           <section className="min-w-0">
-
             {/* Results Header */}
             <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
               <div>
@@ -275,8 +276,8 @@ export function BrowseJobs({ jobs }: { jobs: JobFormData[] }) {
                 </h3>
 
                 <p className="mt-2 max-w-sm text-sm leading-6 text-white/40">
-                  We couldn't find any jobs matching your filters. Try
-                  changing your search or filter options.
+                  We couldn't find any jobs matching your filters. Try changing
+                  your search or filter options.
                 </p>
               </div>
             )}
@@ -284,5 +285,5 @@ export function BrowseJobs({ jobs }: { jobs: JobFormData[] }) {
         </div>
       </main>
     </div>
-  );
+  )
 }

@@ -17,7 +17,7 @@ import {
   StatusBadge,
   CategoryBadge,
   CompanyAvatar,
-} from "@/app/componets/badges"
+} from "@/app/browse-jobs/components/badges"
 import type { JobFormData } from "@/lib/types/job"
 import { formatDate, normalizeStatus } from "@/lib/format"
 import { CATEGORY_LIST } from "@/lib/constants/job-options"
