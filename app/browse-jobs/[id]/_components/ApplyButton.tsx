@@ -23,7 +23,16 @@ const ApplyButton = ({
     if (!user) {
       router.push(`/sign-in?redirectTo=/jobs/${jobId}`)
       return
-    } else if (user.role === "seeker") {
+    }
+
+    if (user.role !== "seeker") {
+      console.log("Only job seekers can apply")
+      return
+    }
+
+    try {
+      setLoading(true)
+
       const application = {
         jobId,
         userId: user.id,
@@ -32,12 +41,17 @@ const ApplyButton = ({
       }
 
       const res = await applyToJob(application)
-      if(res.insertedId){
-        console.log("application submitted successfully")
-        router.push('/browse-jobs')
+
+      if (res.insertedId) {
+        console.log("Application submitted successfully")
+        router.push("/browse-jobs")
+      } else {
+        console.log("Application failed:", res)
       }
-    } else {
-      console.log("user not seeker")
+    } catch (error) {
+      console.error("Application error:", error)
+    } finally {
+      setLoading(false)
     }
   }
 

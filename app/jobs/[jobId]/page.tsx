@@ -19,7 +19,7 @@ import { formatDate } from "@/lib/format"
 import { darkCardClass, monoLabelClass } from "@/lib/ui-styles"
 import { CategoryBadge, StatusBadge } from "@/app/browse-jobs/components/badges"
 import { JobCard } from "@/app/browse-jobs/components/JobCard"
-import { Button } from "@/components/ui/button"
+import { ApplyButton } from "./apply-button"
 
 const optionLabel = (options: JobOption[], value: string) =>
   options.find((option) => option.value === value)?.label ?? value
@@ -222,12 +222,7 @@ export default async function PublicJobDetailsPage({
               </dl>
             </section>
 
-            <Button
-              size="lg"
-              className="w-full rounded-xl bg-[#5c53fe] text-sm font-semibold text-white shadow-[0_0_15px_rgba(92,83,254,0.35)] transition hover:bg-[#4940e8]"
-            >
-              Apply Now
-            </Button>
+            <ApplyButton job={job} />
           </aside>
         </div>
 
