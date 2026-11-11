@@ -51,11 +51,11 @@ export function CompanyAvatar({ name }: { name?: string }) {
 // Application pipeline colors — spec statuses: Applied / Under Review /
 // Shortlisted / Rejected / Offered.
 const applicationStatusStyles: Record<string, string> = {
-  applied: "border-[#3b82f6] bg-[#3b82f6]/10 text-[#3b82f6]",
-  "under review": "border-[#f59e0b] bg-[#f59e0b]/10 text-[#f59e0b]",
-  shortlisted: "border-[#a78bfa] bg-[#a78bfa]/10 text-[#a78bfa]",
-  rejected: "border-[#ef4444] bg-[#ef4444]/10 text-[#ef4444]",
-  offered: "border-[#22c55e] bg-[#22c55e]/10 text-[#22c55e]",
+  applied: "border-white/15 bg-white/[0.06] text-white/80",
+  "under review": "border-[#f59e0b]/30 bg-[#f59e0b]/10 text-[#f59e0b]",
+  shortlisted: "border-[#3b82f6]/40 bg-[#3b82f6]/10 text-[#3b82f6]",
+  rejected: "border-[#ef4444]/30 bg-[#ef4444]/10 text-[#ef4444]",
+  offered: "border-[#22c55e]/30 bg-[#22c55e]/10 text-[#22c55e]",
 }
 
 export function ApplicationStatusBadge({ status }: { status: ApplicationStatus }) {

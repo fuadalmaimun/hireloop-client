@@ -14,7 +14,6 @@ import {
   CheckCircle2,
   Globe,
   Bookmark,
-  ArrowUpRight,
   Sparkles,
 } from "lucide-react"
 
@@ -26,7 +25,6 @@ import {
 
 import type { JobOption, JobFormData } from "@/lib/types/job"
 import { formatDate } from "@/lib/format"
-import { useSession } from "@/lib/auth-client"
 import ApplyButton from "./_components/ApplyButton"
 
 const optionLabel = (options: JobOption[], value: string) =>

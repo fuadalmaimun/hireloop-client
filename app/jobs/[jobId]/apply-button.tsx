@@ -67,6 +67,8 @@ export function ApplyButton({ job }: { job: JobFormData }) {
         jobTitle: job.jobTitle,
         companyName: job.companyName,
         location: job.location || "",
+        jobType: job.jobType || "",
+        workplaceType: job.workplaceType || "",
 
         applicantId: user.id,
         applicantName: user.name || "",

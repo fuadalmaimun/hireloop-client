@@ -2,252 +2,382 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import { BriefcaseBusiness, ExternalLink, MapPin, Search, FileText } from "lucide-react"
+import {
+  Bell,
+  BriefcaseBusiness,
+  ChevronLeft,
+  ChevronRight,
+  CloudCog,
+  Code2,
+  Database,
+  Download,
+  Mail,
+  MapPin,
+  PenTool,
+  Search,
+} from "lucide-react"
 
 import type { Application } from "@/lib/types/application"
-import { APPLICATION_STATUSES } from "@/lib/types/application"
 import { formatRelativeDate } from "@/lib/format"
-import {
-  darkCardClass,
-  monoLabelClass,
-  searchInputClass,
-} from "@/lib/ui-styles"
-import { ApplicationStatusBadge } from "@/app/browse-jobs/components/badges"
-import { FilterSelect } from "@/app/browse-jobs/components/FilterSelect"
 
-type Props = { applications: Application[] }
+// Based on the `My Applications` dashboard screen in the Figma file:
+// top search bar → title + Active/Archived/Export controls → stats row →
+// application table (icon, job title, company, applied, status, details)
+// → footer with result count and pagination.
 
-export function ApplicationsTable({ applications }: Props) {
+const PAGE_SIZE = 5
+
+type ApplicationsTableProps = {
+  applications: Application[]
+  user?: { name?: string | null; email?: string | null; image?: string | null }
+}
+
+// Status pill colors — Figma: Applied gray, Review amber,
+// Shortlisted blue, Rejected red, Offered green.
+const statusStyles: Record<string, string> = {
+  applied: "border-white/15 bg-white/[0.06] text-white/80",
+  "under review": "border-[#f59e0b]/30 bg-[#f59e0b]/10 text-[#f59e0b]",
+  shortlisted: "border-[#3b82f6]/40 bg-[#3b82f6]/10 text-[#3b82f6]",
+  rejected: "border-[#ef4444]/30 bg-[#ef4444]/10 text-[#ef4444]",
+  offered: "border-[#22c55e]/30 bg-[#22c55e]/10 text-[#22c55e]",
+}
+
+const statusLabel = (status: string) =>
+  status === "Under Review" ? "Review" : status
+
+// Row icons cycle through a small neutral set, like the Figma mock.
+const rowIcons = [Code2, PenTool, Database, CloudCog, BriefcaseBusiness]
+
+export function ApplicationsTable({ applications, user }: ApplicationsTableProps) {
   const [search, setSearch] = useState("")
-  const [status, setStatus] = useState("all")
-  const [activeTab, setActiveTab] = useState<"Active" | "Archived">("Active")
+  const [tab, setTab] = useState<"active" | "archived">("active")
+  const [page, setPage] = useState(1)
 
-  // Statistics calculation
-  const totalApplied = applications.length
-  const shortlistedCount = applications.filter(app => app.status?.toLowerCase() === "shortlisted").length
-  const interviewsCount = applications.filter(app => app.status?.toLowerCase() === "interview" || app.status?.toLowerCase() === "review").length
-  const successRate = totalApplied > 0 ? Math.round((applications.filter(app => app.status?.toLowerCase() === "offered").length / totalApplied) * 100) : 0
+  // Stats row — Figma: Total Applied / Shortlisted / Interviews / Success Rate.
+  const stats = useMemo(() => {
+    const total = applications.length
+    const shortlisted = applications.filter((a) => a.status === "Shortlisted").length
+    const interviews = applications.filter((a) => a.status === "Under Review").length
+    const offered = applications.filter((a) => a.status === "Offered").length
 
-  const visible = useMemo(() => {
+    return {
+      total,
+      shortlisted,
+      interviews,
+      successRate: total ? Math.round((offered / total) * 100) : 0,
+    }
+  }, [applications])
+
+  const filtered = useMemo(() => {
     const query = search.trim().toLowerCase()
+    if (!query) return applications
 
-    return applications.filter((application) => {
-      const matchesSearch =
-        !query ||
+    return applications.filter(
+      (application) =>
         application.jobTitle?.toLowerCase().includes(query) ||
-        application.companyName?.toLowerCase().includes(query)
+        application.companyName?.toLowerCase().includes(query) ||
+        application.jobRef?.toLowerCase().includes(query)
+    )
+  }, [applications, search])
 
-      const matchesStatus =
-        status === "all" ||
-        application.status?.toLowerCase() === status.toLowerCase()
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE))
+  const safePage = Math.min(page, totalPages)
+  const paged =
+    tab === "archived"
+      ? [] // archived applications aren't tracked yet
+      : filtered.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE)
 
-      return matchesSearch && matchesStatus
-    })
-  }, [applications, search, status])
+  const rangeStart = filtered.length === 0 ? 0 : (safePage - 1) * PAGE_SIZE + 1
+  const rangeEnd = Math.min(safePage * PAGE_SIZE, filtered.length)
+
+  const switchTab = (next: "active" | "archived") => {
+    setTab(next)
+    setPage(1)
+  }
 
   return (
-    <div className="space-y-6">
-      {/* Top Header & Export PDF */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-white font-manrope">My Applications</h1>
-          <p className="text-sm text-white/60 mt-1">
-            Track your job applications and interview progress in real-time.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <div className="flex rounded-lg bg-[#1a1a1f] p-1 border border-white/10">
-            <button
-              onClick={() => setActiveTab("Active")}
-              className={`px-4 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                activeTab === "Active" ? "bg-[#2a2a35] text-white" : "text-white/60 hover:text-white"
-              }`}
-            >
-              Active
-            </button>
-            <button
-              onClick={() => setActiveTab("Archived")}
-              className={`px-4 py-1.5 text-xs font-medium rounded-md transition-colors ${
-                activeTab === "Archived" ? "bg-[#2a2a35] text-white" : "text-white/60 hover:text-white"
-              }`}
-            >
-              Archived
-            </button>
+    <div className="min-h-screen bg-[#010109] text-white">
+      {/* Top bar — Figma: search left, bell / mail / avatar right */}
+      <div className="border-b border-white/10">
+        <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
+          <div className="relative w-full max-w-xs">
+            <Search
+              className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-white/40"
+              aria-hidden="true"
+            />
+            <input
+              type="text"
+              value={search}
+              onChange={(event) => {
+                setSearch(event.target.value)
+                setPage(1)
+              }}
+              placeholder="Search applications..."
+              aria-label="Search applications"
+              className="h-9 w-full rounded-lg border border-white/10 bg-transparent pr-4 pl-10 text-sm text-white outline-none placeholder:text-white/35 focus:border-[#5c53fe]/60"
+            />
           </div>
 
-          <button
-            onClick={() => alert("Exporting PDF...")}
-            className="inline-flex items-center gap-2 rounded-lg bg-white px-4 py-2 text-xs font-medium text-black hover:bg-white/90 transition"
-          >
-            <FileText className="size-4" />
-            Export PDF
-          </button>
+          <div className="flex shrink-0 items-center gap-1.5">
+            <button
+              type="button"
+              aria-label="Notifications"
+              className="flex size-8 items-center justify-center rounded-lg text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              <Bell className="size-4" aria-hidden="true" />
+            </button>
+
+            <button
+              type="button"
+              aria-label="Messages"
+              className="flex size-8 items-center justify-center rounded-lg text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+            >
+              <Mail className="size-4" aria-hidden="true" />
+            </button>
+
+            {user?.image ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={user.image}
+                alt=""
+                className="size-8 rounded-full border border-white/10 object-cover"
+              />
+            ) : (
+              <span className="flex size-8 items-center justify-center rounded-full border border-white/10 bg-[#222228] text-xs font-semibold text-[#ededef]">
+                {(user?.name || user?.email || "?").charAt(0).toUpperCase()}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className={`${darkCardClass} p-5`}>
-          <p className="text-xs font-medium text-white/50 uppercase tracking-wider">Total Applied</p>
-          <p className="text-3xl font-bold text-white mt-2">{totalApplied}</p>
-        </div>
-        <div className={`${darkCardClass} p-5`}>
-          <p className="text-xs font-medium text-white/50 uppercase tracking-wider">Shortlisted</p>
-          <p className="text-3xl font-bold text-white mt-2">{shortlistedCount}</p>
-        </div>
-        <div className={`${darkCardClass} p-5`}>
-          <p className="text-xs font-medium text-white/50 uppercase tracking-wider">Interviews / Review</p>
-          <p className="text-3xl font-bold text-amber-400 mt-2">{interviewsCount}</p>
-        </div>
-        <div className={`${darkCardClass} p-5`}>
-          <p className="text-xs font-medium text-white/50 uppercase tracking-wider">Success Rate</p>
-          <p className="text-3xl font-bold text-emerald-400 mt-2">{successRate}%</p>
-        </div>
-      </div>
+      <main className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
+        {/* Header — title + subtitle left, Active/Archived + Export right */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <h1 className="font-manrope text-2xl font-bold tracking-tight sm:text-[28px]">
+              My Applications
+            </h1>
 
-      {/* Filters Section */}
-      <section className="mt-6">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div className="flex flex-col gap-2">
-            <label htmlFor="application-search" className={monoLabelClass}>
-              Search
-            </label>
+            <p className="mt-1 text-sm text-white/50">
+              Track your job applications and interview progress in real-time.
+            </p>
+          </div>
 
-            <div className="relative">
-              <Search
-                className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-white/40"
-                aria-hidden="true"
-              />
-              <input
-                id="application-search"
-                type="text"
-                placeholder="Job title or company"
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                className={searchInputClass + " w-full sm:w-64"}
-              />
+          <div className="flex shrink-0 items-center gap-2">
+            {/* Active / Archived segmented control */}
+            <div className="flex items-center rounded-lg border border-white/10 bg-[#16161a] p-1">
+              {(["active", "archived"] as const).map((key) => (
+                <button
+                  key={key}
+                  type="button"
+                  onClick={() => switchTab(key)}
+                  className={
+                    "rounded-md px-3 py-1.5 text-xs font-medium capitalize transition-colors " +
+                    (tab === key
+                      ? "bg-white/10 text-white"
+                      : "text-white/55 hover:text-white")
+                  }
+                >
+                  {key}
+                </button>
+              ))}
             </div>
-          </div>
 
-          <FilterSelect
-            label="Status"
-            value={status}
-            onValueChange={setStatus}
-            options={APPLICATION_STATUSES}
-            allLabel="All statuses"
-          />
+            {/* Export PDF — Figma: white button with download icon */}
+            <button
+              type="button"
+              className="flex h-9 items-center gap-2 rounded-lg bg-white px-3.5 text-xs font-semibold text-[#010109] transition-colors hover:bg-white/85"
+            >
+              <Download className="size-4" aria-hidden="true" />
+              Export PDF
+            </button>
+          </div>
         </div>
 
+        {/* Stats row */}
+        <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            { label: "Total Applied", value: stats.total, className: "text-white" },
+            { label: "Shortlisted", value: stats.shortlisted, className: "text-white" },
+            { label: "Interviews", value: stats.interviews, className: "text-[#f59e0b]" },
+            { label: "Success Rate", value: `${stats.successRate}%`, className: "text-[#22c55e]" },
+          ].map((stat) => (
+            <div
+              key={stat.label}
+              className="rounded-xl border border-white/10 bg-[#0d0d10] p-4"
+            >
+              <p className="text-sm text-white/60">{stat.label}</p>
+              <p className={`mt-1 font-manrope text-3xl font-bold tracking-tight ${stat.className}`}>
+                {stat.value}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Application list card */}
         {applications.length === 0 ? (
           <EmptyState />
         ) : (
-          <>
+          <section className="mt-5 overflow-hidden rounded-xl border border-white/10 bg-[#0d0d10]">
             {/* Desktop table */}
-            <div className={`${darkCardClass} mt-5 hidden overflow-hidden lg:block`}>
+            <div className="hidden min-w-0 lg:block">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-white/10 bg-white/[0.03]">
-                    {["Job Title", "Company", "Applied", "Status", "Action"].map(
-                      (heading) => (
-                        <th
-                          key={heading}
-                          className={
-                            "px-4 py-3 font-medium " + monoLabelClass
-                          }
-                        >
-                          {heading}
-                        </th>
-                      )
-                    )}
+                  <tr className="border-b border-white/10 bg-white/[0.02] text-xs text-white/40">
+                    <th className="px-6 py-3.5 font-medium">Job Title</th>
+                    <th className="px-6 py-3.5 font-medium">Company</th>
+                    <th className="px-6 py-3.5 font-medium">Applied</th>
+                    <th className="px-6 py-3.5 font-medium">Status</th>
+                    <th className="px-6 py-3.5 text-right font-medium">Action</th>
                   </tr>
                 </thead>
 
-                <tbody>
-                  {visible.map((application) => (
-                    <tr
-                      key={application._id}
-                      className="border-b border-white/5 transition-colors last:border-0 hover:bg-white/[0.03]"
-                    >
-                      <td className="max-w-[260px] px-4 py-3.5">
-                        <div className="flex items-center gap-3">
-                          <span className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-white/5 border border-white/10 text-white">
-                            <BriefcaseBusiness className="size-4 text-white/70" />
-                          </span>
-                          <div className="truncate">
-                            <p className="truncate font-medium text-white">
-                              {application.jobTitle}
-                            </p>
-                            {application.jobRef ? (
-                              <p className={monoLabelClass}>{application.jobRef}</p>
-                            ) : null}
+                <tbody className="divide-y divide-white/5">
+                  {paged.map((application, index) => {
+                    const Icon = rowIcons[index % rowIcons.length]
+                    const subtitle =
+                      [application.jobType, application.workplaceType]
+                        .filter(Boolean)
+                        .join(" • ") || application.location
+
+                    return (
+                      <tr
+                        key={application._id}
+                        className="transition-colors hover:bg-white/[0.02]"
+                      >
+                        <td className="px-6 py-4">
+                          <div className="flex items-center gap-3">
+                            <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-[#16161a] text-white/70">
+                              <Icon className="size-4" aria-hidden="true" />
+                            </span>
+
+                            <div className="min-w-0">
+                              <p className="truncate font-medium text-white">
+                                {application.jobTitle}
+                              </p>
+                              {subtitle ? (
+                                <p className="mt-0.5 truncate text-xs text-white/40">
+                                  {subtitle}
+                                </p>
+                              ) : null}
+                            </div>
                           </div>
-                        </div>
-                      </td>
+                        </td>
 
-                      <td className="px-4 py-3.5 text-[#ededef]">
-                        {application.companyName}
-                      </td>
+                        <td className="px-6 py-4 text-[#ededef]">
+                          {application.companyName}
+                        </td>
 
-                      <td className="px-4 py-3.5 text-white/60">
-                        {formatRelativeDate(application.dateApplied)}
-                      </td>
+                        <td className="px-6 py-4 text-white/50">
+                          {formatRelativeDate(application.dateApplied)}
+                        </td>
 
-                      <td className="px-4 py-3.5">
-                        <ApplicationStatusBadge status={application.status} />
-                      </td>
+                        <td className="px-6 py-4">
+                          <StatusPill status={application.status} />
+                        </td>
 
-                      <td className="px-4 py-3.5 text-right">
-                        <ViewDetailsLink jobId={application.jobId} />
-                      </td>
-                    </tr>
-                  ))}
+                        <td className="px-6 py-4 text-right">
+                          <ViewDetailsLink jobId={application.jobId} />
+                        </td>
+                      </tr>
+                    )
+                  })}
                 </tbody>
               </table>
 
-              {visible.length === 0 ? <NoResults /> : null}
+              {paged.length === 0 ? <NoResults /> : null}
             </div>
 
             {/* Tablet + mobile cards */}
-            <div className="mt-5 flex flex-col gap-3 lg:hidden">
-              {visible.map((application) => (
-                <article
-                  key={application._id}
-                  className={`${darkCardClass} p-4`}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="min-w-0">
-                      <p className="truncate font-medium text-white">
-                        {application.jobTitle}
-                      </p>
-                      <p className="mt-1 flex items-center gap-1.5 truncate text-xs text-white/60">
-                        <BriefcaseBusiness
-                          className="size-3.5 shrink-0"
-                          aria-hidden="true"
-                        />
-                        {application.companyName}
-                      </p>
+            <div className="flex flex-col divide-y divide-white/5 lg:hidden">
+              {paged.map((application, index) => {
+                const Icon = rowIcons[index % rowIcons.length]
+                const subtitle =
+                  [application.jobType, application.workplaceType]
+                    .filter(Boolean)
+                    .join(" • ") || application.location
+
+                return (
+                  <article key={application._id} className="p-4">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <span className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-[#16161a] text-white/70">
+                          <Icon className="size-4" aria-hidden="true" />
+                        </span>
+
+                        <div className="min-w-0">
+                          <p className="truncate font-medium text-white">
+                            {application.jobTitle}
+                          </p>
+                          {subtitle ? (
+                            <p className="mt-0.5 truncate text-xs text-white/40">
+                              {subtitle}
+                            </p>
+                          ) : null}
+                        </div>
+                      </div>
+
+                      <StatusPill status={application.status} />
                     </div>
 
-                    <ApplicationStatusBadge status={application.status} />
-                  </div>
+                    <div className="mt-3 flex items-center justify-between gap-3">
+                      <p className="min-w-0 truncate text-xs text-white/50">
+                        <span className="text-[#ededef]">{application.companyName}</span>
+                        {" · Applied "}
+                        {formatRelativeDate(application.dateApplied)}
+                      </p>
 
-                  <div className="mt-3 flex items-center justify-between gap-3">
-                    <p className="text-xs text-white/50">
-                      Applied {formatRelativeDate(application.dateApplied)}
-                    </p>
+                      <ViewDetailsLink jobId={application.jobId} />
+                    </div>
+                  </article>
+                )
+              })}
 
-                    <ViewDetailsLink jobId={application.jobId} />
-                  </div>
-                </article>
-              ))}
-
-              {visible.length === 0 ? <NoResults mobile /> : null}
+              {paged.length === 0 ? <NoResults /> : null}
             </div>
-          </>
+
+            {/* Footer — result count + pagination */}
+            <div className="flex flex-col gap-3 border-t border-white/10 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-sm text-white/50">
+                {tab === "archived" ? (
+                  "No archived applications"
+                ) : filtered.length === 0 ? (
+                  "No matching applications"
+                ) : (
+                  <>
+                    Showing {rangeStart}-{rangeEnd} of {filtered.length}{" "}
+                    {filtered.length === 1 ? "application" : "applications"}
+                  </>
+                )}
+              </p>
+
+              {tab === "active" && totalPages > 1 ? (
+                <Pagination
+                  page={safePage}
+                  totalPages={totalPages}
+                  onPageChange={setPage}
+                />
+              ) : null}
+            </div>
+          </section>
         )}
-      </section>
+      </main>
     </div>
+  )
+}
+
+function StatusPill({ status }: { status: string }) {
+  return (
+    <span
+      className={
+        "inline-flex w-fit items-center rounded-full border px-3 py-1 text-xs font-medium " +
+        (statusStyles[(status || "").toLowerCase()] ??
+          "border-white/10 bg-white/5 text-white/60")
+      }
+    >
+      {statusLabel(status)}
+    </span>
   )
 }
 
@@ -255,35 +385,85 @@ function ViewDetailsLink({ jobId }: { jobId: string }) {
   return (
     <Link
       href={`/jobs/${jobId}`}
-      className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-white/10 px-2.5 py-1.5 text-xs font-medium text-white/70 transition-colors hover:border-[#5c53fe]/60 hover:bg-[#5c53fe]/10 hover:text-white"
+      className="inline-flex shrink-0 items-center gap-1.5 text-sm text-white/70 transition-colors hover:text-white"
     >
       Details
-      <ExternalLink className="size-3.5" aria-hidden="true" />
     </Link>
   )
 }
 
-function NoResults({ mobile = false }: { mobile?: boolean }) {
+function Pagination({
+  page,
+  totalPages,
+  onPageChange,
+}: {
+  page: number
+  totalPages: number
+  onPageChange: (page: number) => void
+}) {
+  const arrowClass =
+    "flex size-8 items-center justify-center rounded-lg border border-white/10 text-white/60 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+
   return (
-    <div
-      className={
-        (mobile ? "" : "border-t border-white/10 ") +
-        "px-4 py-10 text-center text-sm text-white/50"
-      }
-    >
-      No applications match your filters.
+    <div className="flex items-center gap-1.5">
+      <button
+        type="button"
+        aria-label="Previous page"
+        disabled={page <= 1}
+        onClick={() => onPageChange(page - 1)}
+        className={arrowClass}
+      >
+        <ChevronLeft className="size-4" aria-hidden="true" />
+      </button>
+
+      {Array.from({ length: totalPages }, (_, index) => index + 1).map(
+        (pageNumber) => (
+          <button
+            key={pageNumber}
+            type="button"
+            onClick={() => onPageChange(pageNumber)}
+            aria-current={pageNumber === page ? "page" : undefined}
+            className={
+              "flex size-8 items-center justify-center rounded-lg border text-sm transition-colors " +
+              (pageNumber === page
+                ? "border-white/20 bg-white/10 font-semibold text-white"
+                : "border-white/10 text-white/60 hover:bg-white/10 hover:text-white")
+            }
+          >
+            {pageNumber}
+          </button>
+        )
+      )}
+
+      <button
+        type="button"
+        aria-label="Next page"
+        disabled={page >= totalPages}
+        onClick={() => onPageChange(page + 1)}
+        className={arrowClass}
+      >
+        <ChevronRight className="size-4" aria-hidden="true" />
+      </button>
     </div>
+  )
+}
+
+function NoResults() {
+  return (
+    <p className="px-6 py-10 text-center text-sm text-white/40">
+      No matching applications found.
+    </p>
   )
 }
 
 function EmptyState() {
   return (
-    <div className={`${darkCardClass} mt-5 flex flex-col items-center px-4 py-14 text-center`}>
+    <div className="mt-5 flex flex-col items-center rounded-xl border border-white/10 bg-[#0d0d10] px-6 py-16 text-center">
       <span className="flex size-12 items-center justify-center rounded-full bg-[#222228]">
         <MapPin className="size-5 text-white/40" aria-hidden="true" />
       </span>
 
-      <h2 className="mt-4 font-manrope text-lg font-semibold text-white">
+      <h2 className="mt-4 font-manrope text-lg font-semibold">
         No applications yet
       </h2>
 

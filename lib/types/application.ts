@@ -28,6 +28,9 @@ export interface Application {
   jobTitle: string;
   companyName: string;
   location: string;
+  /** Snapshot of the job's work mode — shown under the title in the table. */
+  jobType?: string;
+  workplaceType?: string;
 
   /** The seeker who applied (better-auth user id + snapshot). */
   applicantId: string;
@@ -51,6 +54,8 @@ export interface ApplicationInput {
   jobTitle: string;
   companyName: string;
   location: string;
+  jobType?: string;
+  workplaceType?: string;
 
   applicantId: string;
   applicantName: string;

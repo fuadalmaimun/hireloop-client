@@ -21,7 +21,7 @@ const ApplyButton = ({
 
   const handleApply = async () => {
     if (!user) {
-      router.push(`/sign-in?redirectTo=/jobs/${jobId}`)
+      router.push(`/sign-in?redirectTo=/browse-jobs/${jobId}`)
       return
     }
 

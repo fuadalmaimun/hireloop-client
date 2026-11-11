@@ -40,7 +40,7 @@ export default function SignInPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
 
-  const redirectTo = searchParams.get("redirectTo") || "/"
+  const redirectTo = searchParams.get("redirectTo") || "/browse-jobs"
 
   const [email, setEmail] = React.useState("")
   const [password, setPassword] = React.useState("")

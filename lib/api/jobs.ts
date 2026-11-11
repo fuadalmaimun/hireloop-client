@@ -13,8 +13,20 @@ export const getJobs = async (query = ''): Promise<JobFormData[]> => {
     return response.json();
 };
 
-export const getDetailsPage = async (Id: string) => {
-  const res = await fetch(`${BASE_URL}/jobs/${Id}`)
-  const job = await res.json()
-  return job
-}
+export const getDetailsPage = async (id: string) => {
+  try {
+    const res = await fetch(`${BASE_URL}/jobs/${id}`, {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      console.error("Job details error:", await res.text());
+      return null;
+    }
+
+    return await res.json();
+  } catch (error) {
+    console.error("Failed to fetch job:", error);
+    return null;
+  }
+};
