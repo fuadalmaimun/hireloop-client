@@ -5,7 +5,6 @@ import {
   BriefcaseBusiness,
   CalendarDays,
   MapPin,
-  Users,
 } from "lucide-react"
 
 import { getDetailsPage, getJobs } from "@/lib/api/jobs"
@@ -52,13 +51,17 @@ export default async function PublicJobDetailsPage({
 
   // Similar roles: same category first, fall back to any job.
   const similarJobs =
-    allJobs.filter((item) => item._id !== job._id && item.category === job.category).length > 0
-      ? allJobs.filter((item) => item._id !== job._id && item.category === job.category)
+    allJobs.filter(
+      (item) => item._id !== job._id && item.category === job.category
+    ).length > 0
+      ? allJobs.filter(
+          (item) => item._id !== job._id && item.category === job.category
+        )
       : allJobs.filter((item) => item._id !== job._id)
 
   return (
     <div className="min-h-screen bg-[#010109] text-white">
-      <main className="mx-auto max-w-7xl px-4 pb-10 pt-24 sm:px-6 lg:px-8">
+      <main className="mx-auto max-w-7xl px-4 pt-24 pb-10 sm:px-6 lg:px-8">
         {/* Back */}
         <Link
           href="/browse-jobs"
@@ -114,12 +117,20 @@ export default async function PublicJobDetailsPage({
           <div className="mt-5 flex flex-wrap items-center gap-2">
             {salaryText ? (
               <CategoryBadge
-                category={salaryPeriodLabel && !job.salary ? `${salaryText} / ${salaryPeriodLabel}` : salaryText}
+                category={
+                  salaryPeriodLabel && !job.salary
+                    ? `${salaryText} / ${salaryPeriodLabel}`
+                    : salaryText
+                }
               />
             ) : null}
 
-            <CategoryBadge category={optionLabel(WORKPLACE_TYPES, job.workplaceType)} />
-            <CategoryBadge category={optionLabel(EXPERIENCE_LEVELS, job.experienceLevel)} />
+            <CategoryBadge
+              category={optionLabel(WORKPLACE_TYPES, job.workplaceType)}
+            />
+            <CategoryBadge
+              category={optionLabel(EXPERIENCE_LEVELS, job.experienceLevel)}
+            />
             <CategoryBadge category={job.category} />
           </div>
         </section>
@@ -133,7 +144,7 @@ export default async function PublicJobDetailsPage({
                 About the job
               </h2>
 
-              <p className="mt-4 whitespace-pre-line text-sm leading-7 text-[#a0a0ab]">
+              <p className="mt-4 text-sm leading-7 whitespace-pre-line text-[#a0a0ab]">
                 {job.jobDescription || "No description provided."}
               </p>
             </section>
@@ -182,14 +193,30 @@ export default async function PublicJobDetailsPage({
 
               <dl className="mt-4 flex flex-col gap-3 text-sm">
                 {[
-                  ["Workplace", optionLabel(WORKPLACE_TYPES, job.workplaceType)],
-                  ["Experience", optionLabel(EXPERIENCE_LEVELS, job.experienceLevel)],
+                  [
+                    "Workplace",
+                    optionLabel(WORKPLACE_TYPES, job.workplaceType),
+                  ],
+                  [
+                    "Experience",
+                    optionLabel(EXPERIENCE_LEVELS, job.experienceLevel),
+                  ],
                   ["Openings", job.openings ? String(job.openings) : "—"],
-                  ["Deadline", job.applicationDeadline ? formatDate(job.applicationDeadline) : "—"],
+                  [
+                    "Deadline",
+                    job.applicationDeadline
+                      ? formatDate(job.applicationDeadline)
+                      : "—",
+                  ],
                 ].map(([label, value]) => (
-                  <div key={label} className="flex items-center justify-between gap-3">
+                  <div
+                    key={label}
+                    className="flex items-center justify-between gap-3"
+                  >
                     <dt className="text-white/50">{label}</dt>
-                    <dd className="truncate text-right text-[#ededef]">{value}</dd>
+                    <dd className="truncate text-right text-[#ededef]">
+                      {value}
+                    </dd>
                   </div>
                 ))}
               </dl>
@@ -207,9 +234,7 @@ export default async function PublicJobDetailsPage({
         {/* Similar jobs */}
         {similarJobs.length > 0 ? (
           <section className="mt-10">
-            <h2 className="font-manrope text-xl font-semibold">
-              Similar jobs
-            </h2>
+            <h2 className="font-manrope text-xl font-semibold">Similar jobs</h2>
 
             <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-2">
               {similarJobs.slice(0, 4).map((item) => (

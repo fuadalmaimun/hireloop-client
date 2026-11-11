@@ -37,3 +37,22 @@ export const updateJob = async (
 
   return response.json()
 }
+
+
+// apply to job
+export const applyToJob = async (data: {
+  jobId: string;
+  userId: string;
+  email: string;
+  jobTitle: string;
+}) => {
+  const response = await fetch(`${BASE_URL}/applications`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  return response.json();
+};

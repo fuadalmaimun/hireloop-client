@@ -1,7 +1,6 @@
-
-import { getDetailsPage } from "@/lib/api/jobs";
-import { notFound } from "next/navigation";
-import Link from "next/link";
+import { getDetailsPage } from "@/lib/api/jobs"
+import { notFound } from "next/navigation"
+import Link from "next/link"
 
 import {
   ArrowLeft,
@@ -17,39 +16,44 @@ import {
   Bookmark,
   ArrowUpRight,
   Sparkles,
-} from "lucide-react";
+} from "lucide-react"
 
 import {
   EXPERIENCE_LEVELS,
   JOB_TYPES,
   WORKPLACE_TYPES,
-} from "@/lib/constants/job-options";
+} from "@/lib/constants/job-options"
 
-import type { JobOption, JobFormData } from "@/lib/types/job";
-import { formatDate } from "@/lib/format";
+import type { JobOption, JobFormData } from "@/lib/types/job"
+import { formatDate } from "@/lib/format"
+import { useSession } from "@/lib/auth-client"
+import ApplyButton from "./_components/ApplyButton"
 
 const optionLabel = (options: JobOption[], value: string) =>
-  options.find((option) => option.value === value)?.label ?? value;
+  options.find((option) => option.value === value)?.label ?? value
 
 const BrowseDetailsPage = async ({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string }>
 }) => {
-  const { id } = await params;
+  const { id } = await params
 
-  const job: JobFormData | null = await getDetailsPage(id);
+  const job: JobFormData | null = await getDetailsPage(id)
 
-  if (!job) notFound();
+  if (!job) notFound()
 
   const salaryText =
     job.salary ||
     [job.salaryMin, job.salaryMax].filter(Boolean).join(" – ") ||
-    "Not specified";
+    "Not specified"
 
   const skills = job.skills
-    ? job.skills.split(",").map((skill) => skill.trim()).filter(Boolean)
-    : [];
+    ? job.skills
+        .split(",")
+        .map((skill) => skill.trim())
+        .filter(Boolean)
+    : []
 
   const details = [
     {
@@ -72,12 +76,11 @@ const BrowseDetailsPage = async ({
       value: optionLabel(EXPERIENCE_LEVELS, job.experienceLevel),
       icon: ChartNoAxesColumnIncreasing,
     },
-  ];
+  ]
 
   return (
-    <main className="min-h-screen mt-15 bg-[#08080d] px-4 py-8 text-white sm:px-6 lg:px-8">
+    <main className="mt-15 min-h-screen bg-[#08080d] px-4 py-8 text-white sm:px-6 lg:px-8">
       <div className="mx-auto max-w-7xl">
-
         {/* Back Navigation */}
         <Link
           href="/browse-jobs"
@@ -90,7 +93,6 @@ const BrowseDetailsPage = async ({
         {/* Job Header */}
         <section className="rounded-2xl border border-white/10 bg-[#131319] p-5 sm:p-7">
           <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-
             <div className="flex min-w-0 items-center gap-4">
               <div className="flex size-14 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-[#202027]">
                 <Building2 size={25} className="text-[#8b83ff]" />
@@ -102,9 +104,7 @@ const BrowseDetailsPage = async ({
                 </h1>
 
                 <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
-                  <span className="text-white/55">
-                    {job.companyName}
-                  </span>
+                  <span className="text-white/55">{job.companyName}</span>
 
                   <span className="text-white/20">•</span>
 
@@ -120,29 +120,22 @@ const BrowseDetailsPage = async ({
               <span className="rounded-lg border border-white/10 bg-white/5 p-3 text-white/60">
                 <Bookmark size={17} />
               </span>
-
-              <button
-                type="button"
-                className="rounded-lg bg-[#5c53fe] px-5 py-3 text-sm font-semibold text-white transition hover:bg-[#4940e8]"
-              >
-                Apply Now
-                <ArrowUpRight size={15} className="ml-1 inline" />
-              </button>
+              <ApplyButton
+                jobId={job._id.toString()}
+                jobTitle={job.jobTitle}
+              />{" "}
             </div>
-
           </div>
         </section>
 
         {/* Main Content */}
         <div className="mt-5 grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,1fr)_330px]">
-
           {/* Left Content */}
           <div className="min-w-0">
-
             {/* Job Information Cards */}
             <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {details.map((item) => {
-                const Icon = item.icon;
+                const Icon = item.icon
 
                 return (
                   <div
@@ -151,27 +144,24 @@ const BrowseDetailsPage = async ({
                   >
                     <Icon size={17} className="mb-3 text-[#8b83ff]" />
 
-                    <p className="text-[10px] font-medium uppercase tracking-wider text-white/40">
+                    <p className="text-[10px] font-medium tracking-wider text-white/40 uppercase">
                       {item.label}
                     </p>
 
-                    <p className="mt-1 break-words text-sm font-semibold text-white">
+                    <p className="mt-1 text-sm font-semibold break-words text-white">
                       {item.value}
                     </p>
                   </div>
-                );
+                )
               })}
             </section>
 
             {/* Job Description */}
             <section className="mt-4 rounded-2xl border border-white/10 bg-[#131319] p-5 sm:p-7">
-
               <div>
-                <h2 className="text-lg font-semibold">
-                  Job Description
-                </h2>
+                <h2 className="text-lg font-semibold">Job Description</h2>
 
-                <p className="mt-4 whitespace-pre-line text-sm leading-7 text-white/55">
+                <p className="mt-4 text-sm leading-7 whitespace-pre-line text-white/55">
                   {job.jobDescription || "No description provided."}
                 </p>
               </div>
@@ -189,7 +179,10 @@ const BrowseDetailsPage = async ({
                         key={`${skill}-${index}`}
                         className="rounded-lg border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-white/70"
                       >
-                        <Sparkles size={12} className="mr-1.5 inline text-[#8b83ff]" />
+                        <Sparkles
+                          size={12}
+                          className="mr-1.5 inline text-[#8b83ff]"
+                        />
                         {skill}
                       </span>
                     ))}
@@ -204,7 +197,6 @@ const BrowseDetailsPage = async ({
                 </h2>
 
                 <div className="mt-4 grid gap-4 sm:grid-cols-2">
-
                   <div className="flex items-center gap-3">
                     <div className="rounded-lg bg-white/5 p-2.5">
                       <CalendarDays size={17} className="text-[#8b83ff]" />
@@ -260,19 +252,14 @@ const BrowseDetailsPage = async ({
                       </p>
                     </div>
                   </div>
-
                 </div>
               </div>
-
             </section>
           </div>
 
           {/* Right Sidebar */}
           <aside className="h-fit rounded-2xl border border-white/10 bg-[#131319] p-5 sm:p-6">
-
-            <h2 className="text-base font-semibold">
-              Company Overview
-            </h2>
+            <h2 className="text-base font-semibold">Company Overview</h2>
 
             {/* Company Visual */}
             <div className="mt-5 flex h-44 items-center justify-center overflow-hidden rounded-xl border border-white/5 bg-gradient-to-br from-[#20202a] via-[#111923] to-[#08080d]">
@@ -289,11 +276,8 @@ const BrowseDetailsPage = async ({
 
             {/* Company Details */}
             <div className="mt-5 space-y-4">
-
               <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
-                <span className="text-xs text-white/40">
-                  Company
-                </span>
+                <span className="text-xs text-white/40">Company</span>
 
                 <span className="text-right text-xs font-medium text-white/80">
                   {job.companyName}
@@ -301,9 +285,7 @@ const BrowseDetailsPage = async ({
               </div>
 
               <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
-                <span className="text-xs text-white/40">
-                  Industry
-                </span>
+                <span className="text-xs text-white/40">Industry</span>
 
                 <span className="text-right text-xs font-medium text-white/80">
                   {job.category || "Not specified"}
@@ -311,9 +293,7 @@ const BrowseDetailsPage = async ({
               </div>
 
               <div className="flex items-center justify-between gap-3 border-b border-white/10 pb-4">
-                <span className="text-xs text-white/40">
-                  Location
-                </span>
+                <span className="text-xs text-white/40">Location</span>
 
                 <span className="text-right text-xs font-medium text-white/80">
                   {job.location || "Not specified"}
@@ -321,15 +301,12 @@ const BrowseDetailsPage = async ({
               </div>
 
               <div className="flex items-center justify-between gap-3">
-                <span className="text-xs text-white/40">
-                  Job Reference
-                </span>
+                <span className="text-xs text-white/40">Job Reference</span>
 
                 <span className="text-right text-xs font-medium text-white/80">
                   {job.ref || "N/A"}
                 </span>
               </div>
-
             </div>
 
             <Link
@@ -339,12 +316,11 @@ const BrowseDetailsPage = async ({
               Explore More Jobs
               <Globe size={14} />
             </Link>
-
           </aside>
         </div>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default BrowseDetailsPage;
+export default BrowseDetailsPage
