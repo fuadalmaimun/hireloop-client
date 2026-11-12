@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { ArrowUpRight } from "lucide-react"
 import { useSession } from "@/lib/auth-client"
 import { applyToJob } from "@/lib/actions/jobs"
+import { getApplicationsCount } from "@/lib/actions/applications"
 
 const ApplyButton = ({
   jobId,
@@ -32,6 +33,12 @@ const ApplyButton = ({
 
     try {
       setLoading(true)
+      const result = await getApplicationsCount(user.id)
+
+      if (result.count >= 10) {
+        router.push("/payment")
+        return
+      }
 
       const application = {
         jobId,

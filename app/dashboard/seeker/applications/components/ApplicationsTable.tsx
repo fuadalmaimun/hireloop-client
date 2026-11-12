@@ -48,7 +48,10 @@ const statusLabel = (status: string) =>
 // Row icons cycle through a small neutral set, like the Figma mock.
 const rowIcons = [Code2, PenTool, Database, CloudCog, BriefcaseBusiness]
 
-export function ApplicationsTable({ applications, user }: ApplicationsTableProps) {
+export function ApplicationsTable({
+  applications,
+  user,
+}: ApplicationsTableProps) {
   const [search, setSearch] = useState("")
   const [tab, setTab] = useState<"active" | "archived">("active")
   const [page, setPage] = useState(1)
@@ -56,8 +59,12 @@ export function ApplicationsTable({ applications, user }: ApplicationsTableProps
   // Stats row — Figma: Total Applied / Shortlisted / Interviews / Success Rate.
   const stats = useMemo(() => {
     const total = applications.length
-    const shortlisted = applications.filter((a) => a.status === "Shortlisted").length
-    const interviews = applications.filter((a) => a.status === "Under Review").length
+    const shortlisted = applications.filter(
+      (a) => a.status === "Shortlisted"
+    ).length
+    const interviews = applications.filter(
+      (a) => a.status === "Under Review"
+    ).length
     const offered = applications.filter((a) => a.status === "Offered").length
 
     return {
@@ -198,17 +205,35 @@ export function ApplicationsTable({ applications, user }: ApplicationsTableProps
         {/* Stats row */}
         <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {[
-            { label: "Total Applied", value: stats.total, className: "text-white" },
-            { label: "Shortlisted", value: stats.shortlisted, className: "text-white" },
-            { label: "Interviews", value: stats.interviews, className: "text-[#f59e0b]" },
-            { label: "Success Rate", value: `${stats.successRate}%`, className: "text-[#22c55e]" },
+            {
+              label: "Total Applied",
+              value: stats.total,
+              className: "text-white",
+            },
+            {
+              label: "Shortlisted",
+              value: stats.shortlisted,
+              className: "text-white",
+            },
+            {
+              label: "Interviews",
+              value: stats.interviews,
+              className: "text-[#f59e0b]",
+            },
+            {
+              label: "Success Rate",
+              value: `${stats.successRate}%`,
+              className: "text-[#22c55e]",
+            },
           ].map((stat) => (
             <div
               key={stat.label}
               className="rounded-xl border border-white/10 bg-[#0d0d10] p-4"
             >
               <p className="text-sm text-white/60">{stat.label}</p>
-              <p className={`mt-1 font-manrope text-3xl font-bold tracking-tight ${stat.className}`}>
+              <p
+                className={`mt-1 font-manrope text-3xl font-bold tracking-tight ${stat.className}`}
+              >
                 {stat.value}
               </p>
             </div>
@@ -229,7 +254,9 @@ export function ApplicationsTable({ applications, user }: ApplicationsTableProps
                     <th className="px-6 py-3.5 font-medium">Company</th>
                     <th className="px-6 py-3.5 font-medium">Applied</th>
                     <th className="px-6 py-3.5 font-medium">Status</th>
-                    <th className="px-6 py-3.5 text-right font-medium">Action</th>
+                    <th className="px-6 py-3.5 text-right font-medium">
+                      Action
+                    </th>
                   </tr>
                 </thead>
 
@@ -323,7 +350,9 @@ export function ApplicationsTable({ applications, user }: ApplicationsTableProps
 
                     <div className="mt-3 flex items-center justify-between gap-3">
                       <p className="min-w-0 truncate text-xs text-white/50">
-                        <span className="text-[#ededef]">{application.companyName}</span>
+                        <span className="text-[#ededef]">
+                          {application.companyName}
+                        </span>
                         {" · Applied "}
                         {formatRelativeDate(application.dateApplied)}
                       </p>
@@ -468,8 +497,8 @@ function EmptyState() {
       </h2>
 
       <p className="mt-1.5 max-w-sm text-sm text-white/50">
-        When you apply to a job, your submission shows up here with its
-        current status.
+        When you apply to a job, your submission shows up here with its current
+        status.
       </p>
 
       <Link

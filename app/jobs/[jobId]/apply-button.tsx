@@ -10,6 +10,7 @@ import { useSession } from "@/lib/auth-client"
 import {
   createApplication,
   getApplicationForJob,
+  getApplicationsCount,
 } from "@/lib/actions/applications"
 import type { JobFormData } from "@/lib/types/job"
 import { normalizeStatus } from "@/lib/format"
@@ -18,6 +19,9 @@ import { normalizeStatus } from "@/lib/format"
  * Apply Now — submits an application document to the database.
  * Requires a signed-in seeker; one application per seeker per job.
  */
+/** Free-plan cap — the 11th application requires the Pro upgrade. */
+const FREE_APPLICATION_LIMIT = 10
+
 export function ApplyButton({ job }: { job: JobFormData }) {
   const router = useRouter()
   const { data: session, isPending } = useSession()
@@ -61,6 +65,20 @@ export function ApplyButton({ job }: { job: JobFormData }) {
     setLoading(true)
 
     try {
+      // Free plan: once the seeker has hit the cap, send them to payment.
+      const { count } = await getApplicationsCount(user.id)
+
+      if (count >= FREE_APPLICATION_LIMIT) {
+        setLoading(false)
+        toast.add({
+          title: "Free application limit reached",
+          description: `You've applied to ${FREE_APPLICATION_LIMIT} jobs. Upgrade to HireLoop Pro to keep applying.`,
+          type: "warning",
+        })
+        router.push("/payment")
+        return
+      }
+
       const result = await createApplication({
         jobId: job._id,
         jobRef: job.ref || "",

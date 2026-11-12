@@ -30,7 +30,6 @@ export function BrowseJobs({ jobs }: { jobs: JobFormData[] }) {
   const router = useRouter()
 
   const [visibleJobs, setVisibleJobs] = useState(jobs)
-
   const [search, setSearch] = useState("")
   const [submittedSearch, setSubmittedSearch] = useState("")
   const [category, setCategory] = useState("all")
