@@ -5,9 +5,13 @@ import { Button } from "@/components/ui/button"
 import { getJobs } from "@/lib/api/jobs"
 import type { JobFormData } from "@/lib/types/job"
 import { ManageJobsTable } from "@/app/componets/ManageJobsTable"
+import { getSession } from "@/lib/core/server"
 
 export default async function ManageJobsPage() {
-  const jobs: JobFormData[] = await getJobs()
+
+  const session = await getSession()
+
+  const jobs: JobFormData[] = await getJobs(`recruiterId=${session?.user.id}`)
 
   return (
     <div className="min-h-screen bg-[#010109] text-white">

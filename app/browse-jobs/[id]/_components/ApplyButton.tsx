@@ -3,9 +3,12 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowUpRight } from "lucide-react"
+import { toast } from "sonner"
+
 import { useSession } from "@/lib/auth-client"
 import { applyToJob } from "@/lib/actions/jobs"
 import { getApplicationsCount } from "@/lib/actions/applications"
+import { getUserPremiumById } from "@/lib/api/users"
 
 const ApplyButton = ({
   jobId,
@@ -22,20 +25,27 @@ const ApplyButton = ({
 
   const handleApply = async () => {
     if (!user) {
+      toast.error("Please sign in to apply")
       router.push(`/sign-in?redirectTo=/browse-jobs/${jobId}`)
       return
     }
 
     if (user.role !== "seeker") {
-      console.log("Only job seekers can apply")
+      toast.warning("Only job seekers can apply")
       return
     }
 
     try {
       setLoading(true)
-      const result = await getApplicationsCount(user.id)
 
-      if (result.count >= 10) {
+      // is premium user
+      const premiumResult = await getUserPremiumById(user.id)
+      console.log(premiumResult)
+
+      const countResult = await getApplicationsCount(user.id)
+
+      if (!premiumResult.premium && countResult.count >= 2) {
+        toast.warning("You've reached your free application limit")
         router.push("/payment")
         return
       }
@@ -50,13 +60,14 @@ const ApplyButton = ({
       const res = await applyToJob(application)
 
       if (res.insertedId) {
-        console.log("Application submitted successfully")
+        toast.success("Application submitted successfully!")
         router.push("/browse-jobs")
       } else {
-        console.log("Application failed:", res)
+        toast.error("Application failed. Please try again.")
       }
     } catch (error) {
       console.error("Application error:", error)
+      toast.error("Something went wrong. Please try again.")
     } finally {
       setLoading(false)
     }

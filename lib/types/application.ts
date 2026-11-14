@@ -21,29 +21,21 @@ export const APPLICATION_STATUSES: ApplicationStatus[] = [
 /** One submitted application, as stored in the `applications` collection. */
 export interface Application {
   _id: string;
-
-  /** The applied job — kept denormalized so the table renders without joins. */
   jobId: string;
   jobRef: string;
   jobTitle: string;
   companyName: string;
   location: string;
-  /** Snapshot of the job's work mode — shown under the title in the table. */
   jobType?: string;
   workplaceType?: string;
-
-  /** The seeker who applied (better-auth user id + snapshot). */
   applicantId: string;
   applicantName: string;
   applicantEmail: string;
-
-  /** Optional extras collected during apply. */
   resumeUrl: string;
   coverLetter: string;
 
   status: ApplicationStatus;
 
-  /** ISO date (yyyy-mm-dd) — set server-side when the application is created. */
   dateApplied: string;
 }
 

@@ -3,7 +3,11 @@ import { JobFormData, JobFormFields } from "@/lib/types/job"
 const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
 
 // insert job
-export const createJob = async (data: JobFormFields) => {
+export async function createJob(
+  data: JobFormFields & {
+    recruiterId: string
+  }
+) {
   const response = await fetch(`${BASE_URL}/jobs`, {
     method: "POST",
     headers: {
@@ -38,13 +42,12 @@ export const updateJob = async (
   return response.json()
 }
 
-
 // apply to job
 export const applyToJob = async (data: {
-  jobId: string;
-  userId: string;
-  email: string;
-  jobTitle: string;
+  jobId: string
+  userId: string
+  email: string
+  jobTitle: string
 }) => {
   const response = await fetch(`${BASE_URL}/applications`, {
     method: "POST",
@@ -52,7 +55,7 @@ export const applyToJob = async (data: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
-  });
+  })
 
-  return response.json();
-};
+  return response.json()
+}

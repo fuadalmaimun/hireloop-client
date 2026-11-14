@@ -1,33 +1,30 @@
-// Shared job types — the "new job" form writes this shape, the manage jobs table reads it.
-
 export type JobOption = {
-  value: string;
-  label: string;
-};
-
-export type JobStatus = "Active" | "Closed";
-
-export interface JobFormFields {
-  jobTitle: string;
-  location: string;
-  jobDescription: string;
-  jobType: string;
-  workplaceType: string;
-  experienceLevel: string;
-  skills: string;
-  openings: string;
-  salaryMin: string;
-  salaryMax: string;
-  salaryPeriod: string;
-  applicationDeadline: string;
+  value: string
+  label: string
 }
 
-export interface JobFormData extends JobFormFields {
-  _id: string;
-  ref: string;
-  salary: string;
-  companyName: string;
-  category: string;
-  status: JobStatus;
-  datePosted: string;
+export type JobStatus = "Active" | "Closed"
+
+export interface JobFormData {
+  _id?: string
+  ref?: string
+  jobTitle: string
+  location: string
+  recruiterId: string
+  companyId?: string
+  companyName: string
+  jobDescription: string
+  jobType: string
+  workplaceType: string
+  experienceLevel: string
+  skills: string
+  openings: string
+  salaryMin: string
+  salaryMax: string
+  salaryPeriod: string
+  applicationDeadline: string
+  salary?: string
+  category?: string
+  status?: JobStatus
 }
+export type JobFormFields = JobFormData

@@ -1,8 +1,8 @@
-"use client";
-
-import * as React from "react";
-import Link from "next/link";
-import { ArrowLeft, PlusCircle } from "lucide-react";
+"use client"
+import * as React from "react"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { ArrowLeft, PlusCircle } from "lucide-react"
 
 import {
   Select,
@@ -10,28 +10,29 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
-import type { JobFormFields } from "@/lib/types/job";
-import { createJob } from "@/lib/actions/jobs";
+} from "@/components/ui/select"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import type { JobFormFields } from "@/lib/types/job"
+import { createJob } from "@/lib/actions/jobs"
 import {
+  CATEGORY_LIST,
   EXPERIENCE_LEVELS,
   JOB_TYPES,
   SALARY_PERIODS,
   WORKPLACE_TYPES,
-} from "@/lib/constants/job-options";
-import {
-  darkCardClass,
-  inputClass,
-  textareaClass,
-} from "@/lib/ui-styles";
+} from "@/lib/constants/job-options"
+import { darkCardClass, inputClass, textareaClass } from "@/lib/ui-styles"
+import { useSession } from "@/lib/auth-client"
 
 export const initialForm: JobFormFields = {
   jobTitle: "",
   location: "",
+  recruiterId: "",
+  companyName: "",
+  category: "",
   jobDescription: "",
   jobType: "full-time",
   workplaceType: "on-site",
@@ -42,23 +43,47 @@ export const initialForm: JobFormFields = {
   salaryMax: "",
   salaryPeriod: "month",
   applicationDeadline: "",
-};
+}
 
 export default function CreateJobPage() {
+  const { data: session, isPending } = useSession()
 
-  const [form, setForm] = React.useState<JobFormFields>(initialForm);
+  const router = useRouter()
+  const [form, setForm] = React.useState<JobFormFields>(initialForm)
 
-  const setField = <K extends keyof JobFormFields>(field: K, value: JobFormFields[K]) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-  };
-
- async function  handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    console.log("Job form data:", form);
-
-    const result = await createJob(form);
-    console.log("Created job:", result);
+  const setField = <K extends keyof JobFormFields>(
+    field: K,
+    value: JobFormFields[K]
+  ) => {
+    setForm((prev) => ({ ...prev, [field]: value }))
   }
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault()
+
+    if (!session?.user.id) return
+
+    const result = await createJob({
+      ...form,
+      recruiterId: session.user.id,
+    })
+    console.log("Created job:", result)
+
+    if (result.success) {
+      router.push("/dashboard/recruiter/jobs")
+    }
+
+    if (
+      !result.success &&
+      result.message ===
+        "Free plan allows only 2 job postings. Upgrade to Premium."
+    ) {
+      router.push("/payment")
+      return
+    }
+  }
+
+  if (isPending) return <p>Loading...</p>
 
   return (
     <div className="min-h-screen bg-[#010109] text-white">
@@ -76,7 +101,7 @@ export default function CreateJobPage() {
 
       <main className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
         {/* Welcome header — Figma "Section - Welcome Header → Heading 1" pattern */}
-        <div className="flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.25em] text-[#827aff]">
+        <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.25em] text-[#827aff] uppercase">
           <PlusCircle className="size-3.5" aria-hidden="true" />
           New Job
         </div>
@@ -90,7 +115,9 @@ export default function CreateJobPage() {
         <form onSubmit={handleSubmit} className="mt-8 space-y-5">
           {/* Job details card — Figma dashboard cards: #141418 + white/10 border */}
           <section className={`${darkCardClass} p-5 sm:p-6`}>
-            <h2 className="font-manrope text-base font-semibold">Job details</h2>
+            <h2 className="font-manrope text-base font-semibold">
+              Job details
+            </h2>
 
             <div className="mt-5 space-y-4">
               <div className="flex flex-col gap-1.5">
@@ -108,7 +135,47 @@ export default function CreateJobPage() {
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="job-description" className="text-xs text-white/70">
+                <Label className="text-xs text-white/70">Category</Label>
+                <Select
+                  value={form.category ?? ""}
+                  onValueChange={(value) =>
+                    setField("category", value as string)
+                  }
+                >
+                  <SelectTrigger className={inputClass}>
+                    <SelectValue>
+                      {form.category || "Select category"}
+                    </SelectValue>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CATEGORY_LIST.map((category) => (
+                      <SelectItem key={category} value={category}>
+                        {category}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="company-name" className="text-xs text-white/70">
+                  Company name
+                </Label>
+                <Input
+                  id="company-name"
+                  name="companyName"
+                  placeholder="e.g. Acme Technologies"
+                  value={form.companyName}
+                  onChange={(e) => setField("companyName", e.target.value)}
+                  className={inputClass}
+                />
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label
+                  htmlFor="job-description"
+                  className="text-xs text-white/70"
+                >
                   Job description
                 </Label>
                 <Textarea
@@ -127,7 +194,9 @@ export default function CreateJobPage() {
                   <Label className="text-xs text-white/70">Job type</Label>
                   <Select
                     value={form.jobType}
-                    onValueChange={(value) => setField("jobType", value as string)}
+                    onValueChange={(value) =>
+                      setField("jobType", value as string)
+                    }
                   >
                     <SelectTrigger className={inputClass}>
                       <SelectValue>
@@ -146,7 +215,9 @@ export default function CreateJobPage() {
                 </div>
 
                 <div className="flex flex-col gap-1.5">
-                  <Label className="text-xs text-white/70">Workplace type</Label>
+                  <Label className="text-xs text-white/70">
+                    Workplace type
+                  </Label>
                   <Select
                     value={form.workplaceType}
                     onValueChange={(value) =>
@@ -173,10 +244,7 @@ export default function CreateJobPage() {
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="flex flex-col gap-1.5">
-                  <Label
-                    htmlFor="location"
-                    className="text-xs text-white/70"
-                  >
+                  <Label htmlFor="location" className="text-xs text-white/70">
                     Location{" "}
                     <span className="text-[10px] text-white/40">
                       (hidden for remote)
@@ -224,7 +292,9 @@ export default function CreateJobPage() {
 
           {/* Requirements card */}
           <section className={`${darkCardClass} p-5 sm:p-6`}>
-            <h2 className="font-manrope text-base font-semibold">Requirements</h2>
+            <h2 className="font-manrope text-base font-semibold">
+              Requirements
+            </h2>
 
             <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
@@ -274,9 +344,7 @@ export default function CreateJobPage() {
                   onChange={(e) =>
                     setField("applicationDeadline", e.target.value)
                   }
-                  className={
-                    inputClass + " [color-scheme:dark] sm:w-1/2"
-                  }
+                  className={inputClass + " [color-scheme:dark] sm:w-1/2"}
                 />
               </div>
             </div>
@@ -331,9 +399,8 @@ export default function CreateJobPage() {
                 >
                   <SelectTrigger className={inputClass}>
                     <SelectValue>
-                      {SALARY_PERIODS.find(
-                        (o) => o.value === form.salaryPeriod
-                      )?.label ?? "Select period"}
+                      {SALARY_PERIODS.find((o) => o.value === form.salaryPeriod)
+                        ?.label ?? "Select period"}
                     </SelectValue>
                   </SelectTrigger>
                   <SelectContent>
@@ -367,5 +434,5 @@ export default function CreateJobPage() {
         </form>
       </main>
     </div>
-  );
+  )
 }

@@ -31,13 +31,18 @@ export const getApplications = async (
 }
 
 // Get applications count
+// Get applications count
 export const getApplicationsCount = async (
   applicantId: string
 ): Promise<{ count: number }> => {
   const response = await fetch(
     `${BASE_URL}/applications/count?applicantId=${encodeURIComponent(applicantId)}`
   )
-  if (!response.ok) return { count: 0 }
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch applications count")
+  }
+
   return response.json()
 }
 

@@ -5,8 +5,7 @@ import { auth } from "@/lib/auth"
 import { getApplications } from "@/lib/actions/applications"
 import { ApplicationsTable } from "./components/ApplicationsTable"
 
-// Based on the Figma "My Applications" dashboard screen — the layout lives
-// in the client component; this page only authenticates and fetches data.
+
 
 export default async function MyApplicationsPage() {
   const session = await auth.api.getSession({ headers: await headers() })

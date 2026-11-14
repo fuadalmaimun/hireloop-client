@@ -201,16 +201,17 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
       </div>
 
       {/* Jobs Table */}
+            {/* Jobs Table */}
       <section className={`${darkCardClass} mt-6 overflow-hidden`}>
         {/* Desktop Table */}
         <div className="hidden min-w-0 lg:block">
-          <div className="grid grid-cols-[1.7fr_1.4fr_1.1fr_0.9fr_1.1fr_1fr_0.9fr] items-center border-b border-white/[0.07] bg-[#1a1a1f] px-5 py-4">
+          <div className="grid grid-cols-[1.6fr_1.3fr_1fr_0.8fr_1fr_1fr_0.9fr_0.9fr] items-center border-b border-white/[0.07] bg-[#1a1a1f] px-5 py-4">
             {[
               "Title",
               "Company",
               "Category",
               "Type",
-              "Date Posted",
+              "Deadline",
               "Status",
               "Actions",
             ].map((title) => (
@@ -226,29 +227,31 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
           {filtered.map((jobItem) => (
             <div
               key={jobItem._id || jobItem.ref}
-              className="grid grid-cols-[1.7fr_1.4fr_1.1fr_0.9fr_1.1fr_1fr_0.9fr] items-center border-t border-white/[0.07] px-5 py-4 first:border-t-0"
+              className="grid grid-cols-[1.6fr_1.3fr_1fr_0.8fr_1fr_1fr_0.9fr_0.9fr] items-center border-t border-white/[0.07] px-5 py-4 first:border-t-0"
             >
               <div className="flex min-w-0 flex-col gap-1">
                 <span className="truncate text-sm font-medium text-[#ededef]">
                   {jobItem.jobTitle}
                 </span>
 
-                <span className="text-xs text-[#a0a0ab]">
-                  Ref: {jobItem.ref}
-                </span>
+              
               </div>
 
               <CompanyAvatar name={jobItem.companyName} />
 
-              <CategoryBadge category={jobItem.category} />
+              <CategoryBadge category={jobItem.category ?? "Uncategorized"} />
 
               <span className="text-sm text-[#a0a0ab]">{jobItem.jobType}</span>
 
+           
+
               <span className="text-sm text-[#a0a0ab]">
-                {formatDate(jobItem.datePosted)}
+                {jobItem.applicationDeadline
+                  ? formatDate(jobItem.applicationDeadline)
+                  : "—"}
               </span>
 
-              <StatusBadge status={jobItem.status} />
+              <StatusBadge status={normalizeStatus(jobItem.status)} />
 
               <div className="flex justify-end pr-1">
                 <ActionButtons job={jobItem} />
@@ -267,22 +270,25 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
                     {jobItem.jobTitle}
                   </h3>
 
-                  <span className="text-xs text-[#a0a0ab]">
-                    Ref: {jobItem.ref}
-                  </span>
+              
                 </div>
 
-                <StatusBadge status={jobItem.status} />
+                <StatusBadge status={normalizeStatus(jobItem.status)} />
               </div>
 
               <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-3 text-xs text-[#a0a0ab]">
                 <CompanyAvatar name={jobItem.companyName} />
 
-                <CategoryBadge category={jobItem.category} />
+                <CategoryBadge category={jobItem.category ?? "Uncategorized"} />
+
+             
 
                 <span className="flex items-center gap-1.5">
                   <CalendarDays className="size-3.5" />
-                  {formatDate(jobItem.datePosted)}
+                  Deadline:{" "}
+                  {jobItem.applicationDeadline
+                    ? formatDate(jobItem.applicationDeadline)
+                    : "—"}
                 </span>
               </div>
 
