@@ -16,10 +16,11 @@ export default function CopyButton({ text }: { text: string }) {
     <button
       type="button"
       onClick={handleCopy}
-      className="shrink-0 text-gray-400 transition hover:text-white"
-      title="Copy Subscription ID"
+      className="shrink-0 text-white/40 transition hover:text-white"
+      title="Copy"
+      aria-label={`Copy ${text.slice(0, 3)}…`}
     >
-      {copied ? <Check size={16} /> : <Copy size={16} />}
+      {copied ? <Check size={15} className="text-[#22c55e]" /> : <Copy size={15} />}
     </button>
   )
 }

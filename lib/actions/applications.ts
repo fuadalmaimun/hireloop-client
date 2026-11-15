@@ -17,6 +17,21 @@ export const createApplication = async (data: ApplicationInput) => {
   return response.json()
 }
 
+export const updateApplications = async (
+  id: string,
+  data: { status: string }
+) => {
+  const res = await fetch(`${BASE_URL}/applications/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  return res.json();
+};
+
 // Get all applications
 export const getApplications = async (
   applicantId: string
@@ -60,4 +75,18 @@ export const getApplicationForJob = async (
   const list: Application[] = await response.json()
 
   return list[0] ?? null
+}
+
+// Get every application for one job — the recruiter "review applicants"
+// screen reads this. The API matches jobId stored as string or ObjectId.
+export const getApplicationsForJob = async (
+  jobId: string
+): Promise<Application[]> => {
+  const response = await fetch(
+    `${BASE_URL}/applications?jobId=${encodeURIComponent(jobId)}`
+  )
+
+  if (!response.ok) return []
+
+  return response.json()
 }

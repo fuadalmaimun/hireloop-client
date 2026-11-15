@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { CalendarDays, Eye, Search } from "lucide-react"
+import { CalendarDays, Eye, Search, Users } from "lucide-react"
 
 import {
   Select,
@@ -33,6 +33,18 @@ import Link from "next/link"
 function ActionButtons({ job }: { job: JobFormData }) {
   return (
     <div className="flex shrink-0 items-center gap-1">
+      <Link
+        href={`/dashboard/recruiter/jobs/${job._id}/applications`}
+        className={
+          "flex size-8 items-center justify-center rounded-md " +
+          ghostIconButtonClass
+        }
+        aria-label="View applications"
+        title="View applications"
+      >
+        <Users size={16} />
+      </Link>
+
       <Link
         href={`/dashboard/recruiter/jobs/${job._id}`}
         className={
@@ -101,9 +113,7 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
       <div className="mt-7 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
-            <p className={monoLabelClass}>
-              Status
-            </p>
+            <p className={monoLabelClass}>Status</p>
 
             <Select
               value={statusFilter}
@@ -128,9 +138,7 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
           </div>
 
           <div className="flex flex-col gap-2">
-            <p className={monoLabelClass}>
-              Category
-            </p>
+            <p className={monoLabelClass}>Category</p>
 
             <Select
               value={categoryFilter}
@@ -157,9 +165,7 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
 
         {/* Quick Filter */}
         <div className="flex flex-col gap-2">
-          <p className={monoLabelClass}>
-            Quick filter
-          </p>
+          <p className={monoLabelClass}>Quick filter</p>
 
           <div className="flex w-fit items-center gap-1 rounded-lg border border-white/10 bg-[#0d0d10] p-1.5">
             {(
@@ -201,7 +207,7 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
       </div>
 
       {/* Jobs Table */}
-            {/* Jobs Table */}
+      {/* Jobs Table */}
       <section className={`${darkCardClass} mt-6 overflow-hidden`}>
         {/* Desktop Table */}
         <div className="hidden min-w-0 lg:block">
@@ -233,8 +239,6 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
                 <span className="truncate text-sm font-medium text-[#ededef]">
                   {jobItem.jobTitle}
                 </span>
-
-              
               </div>
 
               <CompanyAvatar name={jobItem.companyName} />
@@ -242,8 +246,6 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
               <CategoryBadge category={jobItem.category ?? "Uncategorized"} />
 
               <span className="text-sm text-[#a0a0ab]">{jobItem.jobType}</span>
-
-           
 
               <span className="text-sm text-[#a0a0ab]">
                 {jobItem.applicationDeadline
@@ -269,8 +271,6 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
                   <h3 className="truncate text-sm font-semibold text-[#ededef]">
                     {jobItem.jobTitle}
                   </h3>
-
-              
                 </div>
 
                 <StatusBadge status={normalizeStatus(jobItem.status)} />
@@ -280,8 +280,6 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
                 <CompanyAvatar name={jobItem.companyName} />
 
                 <CategoryBadge category={jobItem.category ?? "Uncategorized"} />
-
-             
 
                 <span className="flex items-center gap-1.5">
                   <CalendarDays className="size-3.5" />
