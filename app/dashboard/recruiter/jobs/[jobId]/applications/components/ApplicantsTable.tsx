@@ -22,6 +22,7 @@ import {
   darkCardClass,
   ghostIconButtonClass,
   monoLabelClass,
+  rowHoverClass,
   searchInputClass,
 } from "@/lib/ui-styles"
 import { updateApplications } from "@/lib/actions/applications"
@@ -202,7 +203,12 @@ function ApplicantRow({
   onStatusChange: (id: string, status: string) => void
 }) {
   return (
-    <div className="grid grid-cols-[1.5fr_1fr_1fr_0.9fr_1.2fr] items-center border-t border-white/[0.07] px-5 py-4 first:border-t-0">
+    <div
+      className={
+        "grid grid-cols-[1.5fr_1fr_1fr_0.9fr_1.2fr] items-center border-t border-white/[0.07] px-5 py-4 first:border-t-0 " +
+        rowHoverClass
+      }
+    >
       <ApplicantIdentity application={application} />
 
       <span className="text-sm text-[#a0a0ab]">
@@ -235,7 +241,7 @@ function ApplicantCard({
   onStatusChange: (id: string, status: string) => void
 }) {
   return (
-    <article className="p-5 sm:p-6">
+    <article className={"p-5 sm:p-6 " + rowHoverClass}>
       <div className="flex items-start justify-between gap-4">
         <ApplicantIdentity application={application} />
 

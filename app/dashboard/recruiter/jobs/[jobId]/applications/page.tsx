@@ -5,7 +5,8 @@ import { ArrowLeft } from "lucide-react"
 import { getSession } from "@/lib/core/server"
 import { getDetailsPage } from "@/lib/api/jobs"
 import { getApplicationsForJob } from "@/lib/actions/applications"
-import { monoLabelClass } from "@/lib/ui-styles"
+import { PageHeader } from "@/app/componets/PageHeader"
+import { pageContainerClass } from "@/lib/ui-styles"
 import type { JobFormData } from "@/lib/types/job"
 import { ApplicantsTable } from "./components/ApplicantsTable"
 
@@ -35,31 +36,25 @@ export default async function JobApplicationsPage({
   const applications = await getApplicationsForJob(jobId)
 
   return (
-    <div className="min-h-screen bg-[#010109] text-white">
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-        <Link
-          href="/dashboard/recruiter/jobs"
-          className="inline-flex items-center gap-1.5 text-sm text-white/55 transition-colors hover:text-white"
-        >
-          <ArrowLeft className="size-4" aria-hidden="true" />
-          Back to jobs
-        </Link>
+    <div className={pageContainerClass}>
+      <Link
+        href="/dashboard/recruiter/jobs"
+        className="inline-flex items-center gap-1.5 text-sm text-white/55 transition-colors hover:text-white"
+      >
+        <ArrowLeft className="size-4" aria-hidden="true" />
+        Back to jobs
+      </Link>
 
-        <div className="mt-4">
-          <p className={monoLabelClass}>Job ref · {job.ref || "—"}</p>
+      <div className="mt-4">
+        <PageHeader
+          eyebrow={`Job ref · ${job.ref || "—"}`}
+          title={job.jobTitle}
+          description={`${job.companyName} · ${job.location}`}
+        />
+      </div>
 
-          <h1 className="mt-1 font-manrope text-2xl font-bold tracking-tight sm:text-3xl">
-            {job.jobTitle}
-          </h1>
-
-          <p className="mt-1.5 text-sm text-[#a0a0ab]">
-            {job.companyName} · {job.location}
-          </p>
-        </div>
-
-        {/* Applicant list — client component (search + status dropdowns) */}
-        <ApplicantsTable applications={applications} />
-      </main>
+      {/* Applicant list — client component (search + status dropdowns) */}
+      <ApplicantsTable applications={applications} />
     </div>
   )
 }

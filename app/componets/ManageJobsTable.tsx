@@ -25,6 +25,7 @@ import {
   darkCardClass,
   ghostIconButtonClass,
   monoLabelClass,
+  rowHoverClass,
   searchInputClass,
   selectClass,
 } from "@/lib/ui-styles"
@@ -233,7 +234,10 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
           {filtered.map((jobItem) => (
             <div
               key={jobItem._id || jobItem.ref}
-              className="grid grid-cols-[1.6fr_1.3fr_1fr_0.8fr_1fr_1fr_0.9fr_0.9fr] items-center border-t border-white/[0.07] px-5 py-4 first:border-t-0"
+              className={
+                "grid grid-cols-[1.6fr_1.3fr_1fr_0.8fr_1fr_1fr_0.9fr_0.9fr] items-center border-t border-white/[0.07] px-5 py-4 first:border-t-0 " +
+                rowHoverClass
+              }
             >
               <div className="flex min-w-0 flex-col gap-1">
                 <span className="truncate text-sm font-medium text-[#ededef]">
@@ -265,7 +269,10 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
         {/* Mobile Cards */}
         <div className="flex flex-col divide-y divide-white/[0.07] lg:hidden">
           {filtered.map((jobItem) => (
-            <article key={jobItem._id || jobItem.ref} className="p-5 sm:p-6">
+            <article
+              key={jobItem._id || jobItem.ref}
+              className={"p-5 sm:p-6 " + rowHoverClass}
+            >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex min-w-0 flex-col gap-1">
                   <h3 className="truncate text-sm font-semibold text-[#ededef]">

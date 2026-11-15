@@ -2,6 +2,7 @@
 
 import type { JobStatus } from "@/lib/types/job"
 import type { ApplicationStatus } from "@/lib/types/application"
+import type { Role } from "@/lib/types/dashboard"
 import { normalizeStatus } from "@/lib/format"
 
 export function StatusBadge({ status }: { status: JobStatus }) {
@@ -78,6 +79,27 @@ export function ApplicationStatusBadge({ status }: { status: ApplicationStatus }
         aria-hidden="true"
       />
       {label}
+    </span>
+  )
+}
+
+// Account-role colors — spec roles: seeker / recruiter / admin.
+const roleStyles: Record<Role, string> = {
+  admin: "border-[#a78bfa]/40 bg-[#a78bfa]/10 text-[#a78bfa]",
+  recruiter: "border-[#3b82f6]/40 bg-[#3b82f6]/10 text-[#3b82f6]",
+  seeker: "border-[#22c55e]/40 bg-[#22c55e]/10 text-[#22c55e]",
+}
+
+export function RoleBadge({ role }: { role: Role }) {
+  return (
+    <span
+      className={
+        "inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1 text-[11px] font-medium capitalize " +
+        (roleStyles[role] ?? "border-white/10 bg-[#a1a4aa]/15 text-[#a0a0ab]")
+      }
+    >
+      <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
+      {role}
     </span>
   )
 }

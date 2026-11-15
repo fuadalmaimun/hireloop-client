@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button"
 import { getJobs } from "@/lib/api/jobs"
 import type { JobFormData } from "@/lib/types/job"
 import { ManageJobsTable } from "@/app/componets/ManageJobsTable"
+import { PageHeader } from "@/app/componets/PageHeader"
 import { getSession } from "@/lib/core/server"
+import { pageContainerClass } from "@/lib/ui-styles"
 
 export default async function ManageJobsPage() {
 
@@ -14,21 +16,12 @@ export default async function ManageJobsPage() {
   const jobs: JobFormData[] = await getJobs(`recruiterId=${session?.user.id}`)
 
   return (
-    <div className="min-h-screen bg-[#010109] text-white">
-      <main className="mx-auto max-w-6xl px-4 py-8 sm:px-6">
-
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="font-manrope text-2xl font-bold tracking-tight sm:text-3xl">
-              Manage Jobs
-            </h1>
-
-            <p className="mt-1.5 max-w-md text-sm text-[#a0a0ab]">
-              Oversee all active listings and historical job posts across the
-              platform.
-            </p>
-          </div>
-
+    <div className={pageContainerClass}>
+      <PageHeader
+        eyebrow="Recruiter · Jobs"
+        title="Manage Jobs"
+        description="Oversee all active listings and historical job posts across the platform."
+        actions={
           <Button
             render={<Link href="/dashboard/recruiter/job/new" />}
             nativeButton={false}
@@ -37,11 +30,11 @@ export default async function ManageJobsPage() {
             <PlusCircle className="size-4" aria-hidden="true" />
             Create Job
           </Button>
-        </div>
+        }
+      />
 
-        {/* Filters + search + table — client component (in-memory filtering) */}
-        <ManageJobsTable jobs={jobs} />
-      </main>
+      {/* Filters + search + table — client component (in-memory filtering) */}
+      <ManageJobsTable jobs={jobs} />
     </div>
   )
 }

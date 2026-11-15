@@ -8,7 +8,7 @@ import { toast } from "sonner"
 import { useSession } from "@/lib/auth-client"
 import { applyToJob } from "@/lib/actions/jobs"
 import { getApplicationsCount } from "@/lib/actions/applications"
-import { getUserPremiumById } from "@/lib/api/users"
+import { getUserPremiumById } from "@/lib/api/users-client"
 
 const ApplyButton = ({
   jobId,
