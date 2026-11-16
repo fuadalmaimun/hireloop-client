@@ -23,8 +23,6 @@ import {
   selectClass,
 } from "@/lib/ui-styles"
 import { updateUserRole } from "@/lib/actions/users"
-import { role } from "better-auth/plugins"
-import { id } from "date-fns/locale"
 
 // Admin "Users management" table — modeled on the Figma users-management
 // screen. Role changes here are optimistic/local only; persisting them is
