@@ -75,23 +75,35 @@ const logoutItem = {
   icon: LogOut,
 }
 
-// Brand block at the top of the sidebar — logo mark + product name + role chip.
-function SidebarBrand({ role }: { role: Role }) {
+// Brand block at the top of the sidebar — logo mark + signed-in user's
+// name and their role, so it's always visible which account is in use.
+function SidebarBrand({
+  role,
+  user,
+}: {
+  role: Role
+  user: { name?: string | null; email?: string | null }
+}) {
   return (
-    <Link href="/">
+    <Link href="/" className="block">
       <div className="flex items-center gap-2.5 px-2 py-1">
-        <div className="min-w-0 flex-1">
-          <Image
-            src={logo}
-            alt="HireLoop Logo"
-            width={96}
-            height={96}
-            className="object-contain"
-          />
-          <p className="truncate text-[10px] tracking-[0.18em] text-white/70 uppercase">
-            {role} portal
-          </p>
-        </div>
+        <Image
+          src={logo}
+          alt="HireLoop Logo"
+          width={96}
+          height={96}
+          className="object-contain"
+        />
+      </div>
+
+      <div className="mt-2 px-2">
+        <p className="truncate text-sm font-semibold text-white">
+          {user.name || user.email || "Welcome"}
+        </p>
+
+        <p className="mt-0.5 truncate text-[10px] tracking-[0.18em] text-white/70 uppercase">
+          {role} portal
+        </p>
       </div>
     </Link>
   )
@@ -163,7 +175,7 @@ export function DashboardSidebar() {
     <Sidebar>
       <SidebarHeader>
         <SidebarGroup>
-          <SidebarBrand role={role} />
+          <SidebarBrand role={role} user={session?.user ?? {}} />
         </SidebarGroup>
       </SidebarHeader>
 

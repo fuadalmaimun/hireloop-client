@@ -20,6 +20,32 @@ import { authClient } from "@/lib/auth-client"
 const linkClass =
   "relative text-xs font-semibold text-neutral-300 transition-colors hover:text-white lg:text-sm"
 
+// Profile picture for the signed-in user. Shows the uploaded image URL when
+// present, otherwise falls back to a placeholder with the user's initial.
+function UserAvatar({
+  user,
+}: {
+  user: { name?: string | null; image?: string | null }
+}) {
+  const initial = (user.name || "U").charAt(0).toUpperCase()
+
+  return user.image ? (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src={user.image}
+      alt={user.name || "Profile"}
+      className="size-8 shrink-0 rounded-full border border-white/15 object-cover lg:size-9"
+    />
+  ) : (
+    <span
+      aria-hidden="true"
+      className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#222228] text-xs font-semibold text-white lg:size-9"
+    >
+      {initial}
+    </span>
+  )
+}
+
 export function Navbar() {
   const [open, setOpen] = React.useState(false)
   const [signingOut, setSigningOut] = React.useState(false)
@@ -107,6 +133,8 @@ export function Navbar() {
             <div className="h-8 w-24 animate-pulse rounded-lg bg-white/10" />
           ) : session ? (
             <>
+              <UserAvatar user={session.user ?? {}} />
+
               <p className="text-xs font-medium text-neutral-300 lg:text-sm">
                 Welcome,{" "}
                 <span className="font-bold text-white">
@@ -193,12 +221,16 @@ export function Navbar() {
                 <div className="mx-3 h-10 animate-pulse rounded-lg bg-white/10" />
               ) : session ? (
                 <>
-                  <p className="px-3 py-2 text-sm font-medium text-neutral-300">
-                    Welcome,{" "}
-                    <span className="font-bold text-white">
-                      {session.user?.name}
-                    </span>
-                  </p>
+                  <div className="flex items-center gap-3 px-3 py-2">
+                    <UserAvatar user={session.user ?? {}} />
+
+                    <p className="text-sm font-medium text-neutral-300">
+                      Welcome,{" "}
+                      <span className="font-bold text-white">
+                        {session.user?.name}
+                      </span>
+                    </p>
+                  </div>
 
                   <button
                     type="button"

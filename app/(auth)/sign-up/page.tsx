@@ -11,14 +11,12 @@ import { Label } from "@/components/ui/label";
 
 import {
   BriefcaseBusiness,
-  ShieldCheck,
   UserSearch,
 } from "lucide-react";
 
 const roles = [
   { value: "seeker", label: "Seeker", icon: UserSearch },
   { value: "recruiter", label: "Recruiter", icon: BriefcaseBusiness },
-  { value: "admin", label: "Admin", icon: ShieldCheck },
 ] as const;
 
 const inputClass =
@@ -56,12 +54,18 @@ export default function SignUpPage() {
   const [name, setName] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-  const [role, setRole] = React.useState<"seeker" | "recruiter" | "admin">(
-    "seeker"
-  );
+  const [role, setRole] = React.useState<"seeker" | "recruiter">("seeker");
+  const [image, setImage] = React.useState<File | null>(null);
 
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+
+  // TODO(image-upload): on submit, upload `image` to storage and pass the
+  // resulting URL to signUp.email({ ..., image }) — not implemented yet.
+  function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0] ?? null;
+    setImage(file);
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -157,7 +161,7 @@ export default function SignUpPage() {
             <div
               role="radiogroup"
               aria-label="Account type"
-              className="grid grid-cols-3 gap-2"
+              className="grid grid-cols-2 gap-2"
             >
               {roles.map((option) => (
                 <label key={option.value} className="cursor-pointer">
@@ -226,6 +230,28 @@ export default function SignUpPage() {
               onChange={(e) => setPassword(e.target.value)}
               className={inputClass}
             />
+          </div>
+
+          {/* Profile Image — upload not wired up yet, handler only */}
+          <div className="flex flex-col gap-1.5">
+            <Label htmlFor="signup-image" className="text-xs text-white/70">
+              Profile image
+            </Label>
+
+            <Input
+              id="signup-image"
+              type="file"
+              name="image"
+              accept="image/*"
+              onChange={handleImageChange}
+              className="h-10 rounded-lg border-white/15 bg-[#101010] text-xs text-white file:mr-3 file:h-full file:rounded-l-lg file:border-0 file:border-r file:border-white/15 file:bg-white/[0.06] file:px-3 file:text-xs file:font-medium file:text-white/80 sm:h-11 sm:text-sm"
+            />
+
+            {image ? (
+              <p className="text-[11px] text-white/55">
+                Selected: {image.name}
+              </p>
+            ) : null}
           </div>
 
           {/* Submit */}
