@@ -1,20 +1,17 @@
-import { JobFormData, JobFormFields } from "@/lib/types/job"
+'use server'
+import { JobFormData } from "@/lib/types/job"
+import { protectedMutation } from "../core/server"
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8080"
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
 
 // insert job
 export async function createJob(
-  data: JobFormFields & {
+  data: JobFormData & {
     recruiterId: string
   }
 ) {
-  const response = await fetch(`${BASE_URL}/jobs`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: JSON.stringify(data),
-  })
+  const api = `${BASE_URL}/jobs`
+  const response = await protectedMutation(api, "POST", data)
   return response.json()
 }
 

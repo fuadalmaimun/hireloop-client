@@ -29,17 +29,41 @@ export const getToken = async () => {
 
   return session.session.token
 }
+export const protectedMutation = async (
+  api: string,
+  method: string,
+  data?: unknown
+) => {
+  const token = await getToken()
+
+  const res = await fetch(api, {
+    method,
+    headers: {
+      "content-Type": "application/json",
+      authorization: `Bearer ${token}`,
+    },
+    body: data ? JSON.stringify(data) : null,
+  })
+
+  if (res.status === 401) {
+    redirect("/unauthorized")
+  }
+
+  return res
+}
 
 // fetch wrapper that adds the Bearer token and keeps any options
 // (method, body, cache, extra headers) the caller passes in.
-export const authFetch = async (api: string, init: RequestInit = {}) => {
+export const authFetch = async (api: string) => {
   const token = await getToken()
 
-  const mergedHeaders = new Headers(init.headers)
-  mergedHeaders.set("authorization", `Bearer ${token}`)
-
-  return fetch(api, {
-    ...init,
-    headers: mergedHeaders,
+  const res = await fetch(api, {
+    headers: {
+      authorization: `Bearer ${token}`,
+    },
   })
+
+  if (res.status === 401 || res.status === 403) redirect("/unauthorized")
+
+  return res
 }
