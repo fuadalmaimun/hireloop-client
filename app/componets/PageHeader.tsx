@@ -11,7 +11,7 @@ import { pageDescClass, pageTitleClass } from "@/lib/ui-styles"
 type PageHeaderProps = {
   /** Small uppercase label above the title (e.g. "RECRUITER · JOBS"). */
   eyebrow?: string
-  title: string
+  title: React.ReactNode;
   description?: string
   /** Buttons/controls aligned to the right of the title. */
   actions?: ReactNode

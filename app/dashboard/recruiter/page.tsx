@@ -29,9 +29,7 @@ export default async function RecruiterDashboardPage() {
     redirect("/sign-in")
   }
 
-  const jobs: JobFormData[] = await getJobs(
-    `recruiterId=${session?.user.id}`
-  )
+  const jobs: JobFormData[] = await getJobs(`recruiterId=${session?.user.id}`)
 
   const stats = {
     total: jobs.length,
@@ -47,7 +45,14 @@ export default async function RecruiterDashboardPage() {
     <div className={pageContainerClass}>
       <PageHeader
         eyebrow="Recruiter · Overview"
-        title={`Welcome back, ${(session.user.name || "there").split(" ")[0]}`}
+        title={
+          <>
+            <span className="text-white">Welcome back, </span>
+            <span className="text-white">
+              {(session.user.name || "there").split(" ")[0]}
+            </span>
+          </>
+        }
         description="Track your listings and keep the pipeline moving."
         actions={
           <Link
@@ -68,9 +73,9 @@ export default async function RecruiterDashboardPage() {
           { label: "Closed", value: stats.closed },
         ].map((stat) => (
           <div key={stat.label} className={statCardClass}>
-            <p className="text-sm text-[#a0a0ab]">{stat.label}</p>
+            <p className="text-sm text-white">{stat.label}</p>
 
-            <p className={statValueClass}>{stat.value}</p>
+            <p className={`${statValueClass} text-white`}>{stat.value}</p>
           </div>
         ))}
       </div>
@@ -113,7 +118,7 @@ export default async function RecruiterDashboardPage() {
 
       {recent.length === 0 ? (
         <div className={`${darkCardClass} mt-3 px-6 py-10 text-center`}>
-          <p className="text-sm text-white/55">
+          <p className="text-sm text-white/85">
             You haven't posted any jobs yet.
           </p>
 
@@ -125,7 +130,9 @@ export default async function RecruiterDashboardPage() {
           </Link>
         </div>
       ) : (
-        <section className={`${darkCardClass} mt-3 divide-y divide-white/[0.06] overflow-hidden`}>
+        <section
+          className={`${darkCardClass} mt-3 divide-y divide-white/[0.06] overflow-hidden`}
+        >
           {recent.map((job) => (
             <RecentJobRow key={job._id || job.ref} job={job} />
           ))}
@@ -142,11 +149,11 @@ function RecentJobRow({ job }: { job: JobFormData }) {
       className={`${rowHoverClass} flex items-center justify-between gap-4 px-5 py-4`}
     >
       <div className="min-w-0">
-        <p className="truncate text-sm font-medium text-[#ededef]">
+        <p className="truncate text-sm font-medium text-white">
           {job.jobTitle}
         </p>
 
-        <p className="mt-0.5 truncate text-xs text-white/40">
+        <p className="mt-0.5 truncate text-xs text-white/75">
           {job.ref ? `${job.ref} · ` : ""}
           {job.companyName}
         </p>

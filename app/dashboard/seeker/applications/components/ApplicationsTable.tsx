@@ -109,7 +109,7 @@ export function ApplicationsTable({
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
           <div className="relative w-full max-w-xs">
             <Search
-              className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-white/40"
+              className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-white/75"
               aria-hidden="true"
             />
             <input
@@ -121,7 +121,7 @@ export function ApplicationsTable({
               }}
               placeholder="Search applications..."
               aria-label="Search applications"
-              className="h-9 w-full rounded-lg border border-white/10 bg-transparent pr-4 pl-10 text-sm text-white outline-none placeholder:text-white/35 focus:border-[#5c53fe]/60"
+              className="h-9 w-full rounded-lg border border-white/10 bg-transparent pr-4 pl-10 text-sm text-white outline-none placeholder:text-white/70 focus:border-[#5c53fe]/60"
             />
           </div>
 
@@ -129,7 +129,7 @@ export function ApplicationsTable({
             <button
               type="button"
               aria-label="Notifications"
-              className="flex size-8 items-center justify-center rounded-lg text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+              className="flex size-8 items-center justify-center rounded-lg text-white/85 transition-colors hover:bg-white/10 hover:text-white"
             >
               <Bell className="size-4" aria-hidden="true" />
             </button>
@@ -137,7 +137,7 @@ export function ApplicationsTable({
             <button
               type="button"
               aria-label="Messages"
-              className="flex size-8 items-center justify-center rounded-lg text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+              className="flex size-8 items-center justify-center rounded-lg text-white/85 transition-colors hover:bg-white/10 hover:text-white"
             >
               <Mail className="size-4" aria-hidden="true" />
             </button>
@@ -150,7 +150,7 @@ export function ApplicationsTable({
                 className="size-8 rounded-full border border-white/10 object-cover"
               />
             ) : (
-              <span className="flex size-8 items-center justify-center rounded-full border border-white/10 bg-[#222228] text-xs font-semibold text-[#ededef]">
+              <span className="flex size-8 items-center justify-center rounded-full border border-white/10 bg-[#222228] text-xs font-semibold text-white">
                 {(user?.name || user?.email || "?").charAt(0).toUpperCase()}
               </span>
             )}
@@ -166,7 +166,7 @@ export function ApplicationsTable({
               My Applications
             </h1>
 
-            <p className="mt-1 text-sm text-white/50">
+            <p className="mt-1 text-sm text-white/85">
               Track your job applications and interview progress in real-time.
             </p>
           </div>
@@ -183,7 +183,7 @@ export function ApplicationsTable({
                     "rounded-md px-3 py-1.5 text-xs font-medium capitalize transition-colors " +
                     (tab === key
                       ? "bg-white/10 text-white"
-                      : "text-white/55 hover:text-white")
+                      : "text-white/85 hover:text-white")
                   }
                 >
                   {key}
@@ -230,7 +230,7 @@ export function ApplicationsTable({
               key={stat.label}
               className="rounded-xl border border-white/10 bg-[#0d0d10] p-4"
             >
-              <p className="text-sm text-white/60">{stat.label}</p>
+              <p className="text-sm text-white/85">{stat.label}</p>
               <p
                 className={`mt-1 font-manrope text-3xl font-bold tracking-tight ${stat.className}`}
               >
@@ -249,7 +249,7 @@ export function ApplicationsTable({
             <div className="hidden min-w-0 lg:block">
               <table className="w-full text-left text-sm">
                 <thead>
-                  <tr className="border-b border-white/10 bg-white/[0.02] text-xs text-white/40">
+                  <tr className="border-b border-white/10 bg-white/[0.02] text-xs text-white/75">
                     <th className="px-6 py-3.5 font-medium">Job Title</th>
                     <th className="px-6 py-3.5 font-medium">Company</th>
                     <th className="px-6 py-3.5 font-medium">Applied</th>
@@ -284,7 +284,7 @@ export function ApplicationsTable({
                                 {application.jobTitle}
                               </p>
                               {subtitle ? (
-                                <p className="mt-0.5 truncate text-xs text-white/40">
+                                <p className="mt-0.5 truncate text-xs text-white/75">
                                   {subtitle}
                                 </p>
                               ) : null}
@@ -292,11 +292,11 @@ export function ApplicationsTable({
                           </div>
                         </td>
 
-                        <td className="px-6 py-4 text-[#ededef]">
+                        <td className="px-6 py-4 text-white">
                           {application.companyName}
                         </td>
 
-                        <td className="px-6 py-4 text-white/50">
+                        <td className="px-6 py-4 text-white/85">
                           {formatRelativeDate(application.dateApplied)}
                         </td>
 
@@ -338,7 +338,7 @@ export function ApplicationsTable({
                             {application.jobTitle}
                           </p>
                           {subtitle ? (
-                            <p className="mt-0.5 truncate text-xs text-white/40">
+                            <p className="mt-0.5 truncate text-xs text-white/75">
                               {subtitle}
                             </p>
                           ) : null}
@@ -349,8 +349,8 @@ export function ApplicationsTable({
                     </div>
 
                     <div className="mt-3 flex items-center justify-between gap-3">
-                      <p className="min-w-0 truncate text-xs text-white/50">
-                        <span className="text-[#ededef]">
+                      <p className="min-w-0 truncate text-xs text-white/85">
+                        <span className="text-white">
                           {application.companyName}
                         </span>
                         {" · Applied "}
@@ -368,7 +368,7 @@ export function ApplicationsTable({
 
             {/* Footer — result count + pagination */}
             <div className="flex flex-col gap-3 border-t border-white/10 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-sm text-white/50">
+              <p className="text-sm text-white/85">
                 {tab === "archived" ? (
                   "No archived applications"
                 ) : filtered.length === 0 ? (
@@ -402,7 +402,7 @@ function StatusPill({ status }: { status: string }) {
       className={
         "inline-flex w-fit items-center rounded-full border px-3 py-1 text-xs font-medium " +
         (statusStyles[(status || "").toLowerCase()] ??
-          "border-white/10 bg-white/5 text-white/60")
+          "border-white/10 bg-white/5 text-white/85")
       }
     >
       {statusLabel(status)}
@@ -431,7 +431,7 @@ function Pagination({
   onPageChange: (page: number) => void
 }) {
   const arrowClass =
-    "flex size-8 items-center justify-center rounded-lg border border-white/10 text-white/60 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
+    "flex size-8 items-center justify-center rounded-lg border border-white/10 text-white/85 transition-colors hover:bg-white/10 hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
 
   return (
     <div className="flex items-center gap-1.5">
@@ -456,7 +456,7 @@ function Pagination({
               "flex size-8 items-center justify-center rounded-lg border text-sm transition-colors " +
               (pageNumber === page
                 ? "border-white/20 bg-white/10 font-semibold text-white"
-                : "border-white/10 text-white/60 hover:bg-white/10 hover:text-white")
+                : "border-white/10 text-white/85 hover:bg-white/10 hover:text-white")
             }
           >
             {pageNumber}
@@ -479,7 +479,7 @@ function Pagination({
 
 function NoResults() {
   return (
-    <p className="px-6 py-10 text-center text-sm text-white/40">
+    <p className="px-6 py-10 text-center text-sm text-white/75">
       No matching applications found.
     </p>
   )
@@ -489,14 +489,14 @@ function EmptyState() {
   return (
     <div className="mt-5 flex flex-col items-center rounded-xl border border-white/10 bg-[#0d0d10] px-6 py-16 text-center">
       <span className="flex size-12 items-center justify-center rounded-full bg-[#222228]">
-        <MapPin className="size-5 text-white/40" aria-hidden="true" />
+        <MapPin className="size-5 text-white/75" aria-hidden="true" />
       </span>
 
       <h2 className="mt-4 font-manrope text-lg font-semibold">
         No applications yet
       </h2>
 
-      <p className="mt-1.5 max-w-sm text-sm text-white/50">
+      <p className="mt-1.5 max-w-sm text-sm text-white/85">
         When you apply to a job, your submission shows up here with its current
         status.
       </p>

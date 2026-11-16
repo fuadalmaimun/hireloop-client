@@ -63,7 +63,7 @@ export default async function AdminDashboardPage() {
           },
         ].map((stat) => (
           <div key={stat.label} className={statCardClass}>
-            <p className="text-sm text-[#a0a0ab]">{stat.label}</p>
+            <p className="text-sm text-white">{stat.label}</p>
 
             <p className={statValueClass}>{stat.value}</p>
           </div>
@@ -103,11 +103,11 @@ export default async function AdminDashboardPage() {
 
       {/* Sign-up hint */}
       <div className={`${darkCardClass} mt-8 px-6 py-5`}>
-        <p className="font-mono text-[10px] tracking-[0.25em] text-white/35 uppercase">
+        <p className="font-mono text-[10px] tracking-[0.25em] text-white/70 uppercase">
           Note
         </p>
 
-        <p className="mt-1.5 text-sm text-white/60">
+        <p className="mt-1.5 text-sm text-white/85">
           New sign-ups appear in{" "}
           <Link
             href="/dashboard/admin/users"

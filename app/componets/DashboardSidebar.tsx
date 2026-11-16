@@ -88,7 +88,7 @@ function SidebarBrand({ role }: { role: Role }) {
             height={96}
             className="object-contain"
           />
-          <p className="truncate text-[10px] tracking-[0.18em] text-white/35 uppercase">
+          <p className="truncate text-[10px] tracking-[0.18em] text-white/70 uppercase">
             {role} portal
           </p>
         </div>
@@ -116,15 +116,15 @@ function SidebarUserCard({
           className="size-8 shrink-0 rounded-full border border-white/10 object-cover"
         />
       ) : (
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#222228] text-xs font-semibold text-[#ededef]">
+        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#222228] text-xs font-semibold text-white">
           {initials}
         </span>
       )}
 
       <div className="min-w-0 flex-1">
-        <p className="truncate text-xs font-medium text-[#ededef]">{name}</p>
+        <p className="truncate text-xs font-medium text-white">{name}</p>
 
-        <p className="truncate text-[11px] text-white/40">{user.email}</p>
+        <p className="truncate text-[11px] text-white/75">{user.email}</p>
       </div>
     </div>
   )
@@ -169,7 +169,7 @@ export function DashboardSidebar() {
 
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="font-mono text-[10px] tracking-[0.2em] text-white/35 uppercase">
+          <SidebarGroupLabel className="font-mono text-[10px] tracking-[0.2em] text-white/70 uppercase">
             Menu
           </SidebarGroupLabel>
 
@@ -199,7 +199,7 @@ export function DashboardSidebar() {
               <SidebarMenuButton
                 render={<Link href={logoutItem.url} />}
                 tooltip={logoutItem.name}
-                className="text-white/60 hover:text-white data-active:text-white"
+                className="text-white/85 hover:text-white data-active:text-white"
               >
                 <logoutItem.icon />
                 <span>{logoutItem.name}</span>

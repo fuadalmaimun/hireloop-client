@@ -184,7 +184,7 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
                   "flex h-8 items-center rounded-md px-4 text-xs font-medium transition-colors " +
                   (pillFilter === value
                     ? "bg-[#5c53fe] text-white"
-                    : "text-white/55 hover:text-white")
+                    : "text-white/85 hover:text-white")
                 }
               >
                 {label}
@@ -196,7 +196,7 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
 
       {/* Search */}
       <div className="relative mt-6">
-        <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-white/30" />
+        <Search className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-white/65" />
 
         <Input
           type="search"
@@ -224,7 +224,7 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
             ].map((title) => (
               <span
                 key={title}
-                className="text-xs font-medium tracking-wide text-[#a0a0ab] uppercase"
+                className="text-xs font-medium tracking-wide text-white uppercase"
               >
                 {title}
               </span>
@@ -240,7 +240,7 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
               }
             >
               <div className="flex min-w-0 flex-col gap-1">
-                <span className="truncate text-sm font-medium text-[#ededef]">
+                <span className="truncate text-sm font-medium text-white">
                   {jobItem.jobTitle}
                 </span>
               </div>
@@ -249,9 +249,9 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
 
               <CategoryBadge category={jobItem.category ?? "Uncategorized"} />
 
-              <span className="text-sm text-[#a0a0ab]">{jobItem.jobType}</span>
+              <span className="text-sm text-white">{jobItem.jobType}</span>
 
-              <span className="text-sm text-[#a0a0ab]">
+              <span className="text-sm text-white">
                 {jobItem.applicationDeadline
                   ? formatDate(jobItem.applicationDeadline)
                   : "—"}
@@ -275,7 +275,7 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="flex min-w-0 flex-col gap-1">
-                  <h3 className="truncate text-sm font-semibold text-[#ededef]">
+                  <h3 className="truncate text-sm font-semibold text-white">
                     {jobItem.jobTitle}
                   </h3>
                 </div>
@@ -283,7 +283,7 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
                 <StatusBadge status={normalizeStatus(jobItem.status)} />
               </div>
 
-              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-3 text-xs text-[#a0a0ab]">
+              <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-3 text-xs text-white">
                 <CompanyAvatar name={jobItem.companyName} />
 
                 <CategoryBadge category={jobItem.category ?? "Uncategorized"} />
@@ -298,7 +298,7 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
               </div>
 
               <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/[0.07] pt-3">
-                <span className="text-xs text-[#a0a0ab]">
+                <span className="text-xs text-white">
                   {jobItem.jobType} · {jobItem.workplaceType}
                 </span>
 
@@ -310,7 +310,7 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
 
         {/* Empty State */}
         {filtered.length === 0 && (
-          <div className="px-5 py-12 text-center text-sm text-white/45">
+          <div className="px-5 py-12 text-center text-sm text-white/80">
             {jobs.length === 0
               ? "No job posts found."
               : "No job posts match the current filters."}
@@ -319,7 +319,7 @@ export function ManageJobsTable({ jobs }: { jobs: JobFormData[] }) {
       </section>
 
       {/* Result Count */}
-      <p className="mt-4 px-1 text-xs text-white/35">
+      <p className="mt-4 px-1 text-xs text-white/70">
         Showing {filtered.length} of {jobs.length} job posts
       </p>
     </>

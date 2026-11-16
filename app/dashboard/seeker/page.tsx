@@ -29,7 +29,9 @@ export default async function SeekerDashboardPage() {
     redirect("/sign-in")
   }
 
-  const applications = await getApplications(session.user.id)
+  const applications: Application[] = await getApplications(
+    `applicantId=${session.user.id}`
+  )
 
   const stats = {
     total: applications.length,
@@ -70,7 +72,7 @@ export default async function SeekerDashboardPage() {
           { label: "Offers", value: stats.offered },
         ].map((stat) => (
           <div key={stat.label} className={statCardClass}>
-            <p className="text-sm text-[#a0a0ab]">{stat.label}</p>
+            <p className="text-sm text-white">{stat.label}</p>
 
             <p className={statValueClass}>{stat.value}</p>
           </div>
@@ -115,7 +117,7 @@ export default async function SeekerDashboardPage() {
 
       {recent.length === 0 ? (
         <div className={`${darkCardClass} mt-3 px-6 py-10 text-center`}>
-          <p className="text-sm text-white/55">
+          <p className="text-sm text-white/85">
             You haven't applied to any jobs yet.
           </p>
 
@@ -151,11 +153,11 @@ function RecentApplicationRow({
       className={`${rowHoverClass} flex items-center justify-between gap-4 px-5 py-4`}
     >
       <div className="min-w-0">
-        <p className="truncate text-sm font-medium text-[#ededef]">
+        <p className="truncate text-sm font-medium text-white">
           {application.jobTitle}
         </p>
 
-        <p className="mt-0.5 truncate text-xs text-white/40">
+        <p className="mt-0.5 truncate text-xs text-white/75">
           {application.companyName} · Applied{" "}
           {formatRelativeDate(application.dateApplied)}
         </p>

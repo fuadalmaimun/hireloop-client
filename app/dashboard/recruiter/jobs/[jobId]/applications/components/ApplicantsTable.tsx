@@ -68,8 +68,6 @@ export function ApplicantsTable({ applications }: ApplicantsTableProps) {
     const result = await updateApplications(id, { status })
     console.log("updated result", result)
 
-      
-
     setRows((prev) =>
       prev.map((row) =>
         row._id === id
@@ -97,9 +95,9 @@ export function ApplicantsTable({ applications }: ApplicantsTableProps) {
           { label: "Offered", value: stats.offered },
         ].map((stat) => (
           <div key={stat.label} className={`${darkCardClass} bg-[#0d0d10] p-4`}>
-            <p className="text-sm text-[#a0a0ab]">{stat.label}</p>
+            <p className="text-sm text-white">{stat.label}</p>
 
-            <p className="mt-1 font-manrope text-3xl font-bold tracking-tight">
+            <p className="mt-1 font-manrope text-3xl font-bold tracking-tight text-white">
               {stat.value}
             </p>
           </div>
@@ -110,7 +108,7 @@ export function ApplicantsTable({ applications }: ApplicantsTableProps) {
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative w-full max-w-sm">
           <Search
-            className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-white/30"
+            className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-white/65"
             aria-hidden="true"
           />
 
@@ -151,7 +149,7 @@ export function ApplicantsTable({ applications }: ApplicantsTableProps) {
                 ].map((title) => (
                   <span
                     key={title}
-                    className="text-xs font-medium tracking-wide text-[#a0a0ab] uppercase"
+                    className="text-xs font-medium tracking-wide text-white uppercase"
                   >
                     {title}
                   </span>
@@ -186,7 +184,7 @@ export function ApplicantsTable({ applications }: ApplicantsTableProps) {
       </section>
 
       {rows.length > 0 ? (
-        <p className="mt-4 px-1 text-xs text-white/35">
+        <p className="mt-4 px-1 text-xs text-white/70">
           Showing {filtered.length} of {rows.length} applicants
         </p>
       ) : null}
@@ -211,14 +209,14 @@ function ApplicantRow({
     >
       <ApplicantIdentity application={application} />
 
-      <span className="text-sm text-[#a0a0ab]">
+      <span className="text-sm text-white">
         {formatRelativeDate(application.dateApplied)}
       </span>
 
       <ResumeLink url={application.resumeUrl} />
 
       <span
-        className="truncate text-sm text-[#a0a0ab]"
+        className="truncate text-sm text-white"
         title={application.coverLetter || undefined}
       >
         {application.coverLetter || "—"}
@@ -248,12 +246,12 @@ function ApplicantCard({
         <ApplicationStatusBadge status={application.status} />
       </div>
 
-      <p className="mt-3 text-xs text-[#a0a0ab]">
+      <p className="mt-3 text-xs text-white">
         Applied {formatRelativeDate(application.dateApplied)}
       </p>
 
       {application.coverLetter ? (
-        <p className="mt-2 line-clamp-2 text-xs text-white/60">
+        <p className="mt-2 line-clamp-2 text-xs text-white/85">
           {application.coverLetter}
         </p>
       ) : null}
@@ -276,16 +274,16 @@ function ApplicantIdentity({ application }: { application: Application }) {
 
   return (
     <div className="flex min-w-0 items-center gap-3">
-      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#222228] text-xs font-semibold text-[#ededef]">
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#222228] text-xs font-semibold text-white">
         {name.charAt(0).toUpperCase()}
       </span>
 
       <div className="min-w-0">
-        <p className="truncate text-sm font-medium text-[#ededef]">{name}</p>
+        <p className="truncate text-sm font-medium text-white">{name}</p>
 
         <a
           href={`mailto:${application.applicantEmail}`}
-          className="flex w-fit items-center gap-1 truncate text-xs text-white/40 transition-colors hover:text-white"
+          className="flex w-fit items-center gap-1 truncate text-xs text-white/75 transition-colors hover:text-white"
         >
           <Mail className="size-3" aria-hidden="true" />
           {application.applicantEmail}
@@ -296,7 +294,7 @@ function ApplicantIdentity({ application }: { application: Application }) {
 }
 
 function ResumeLink({ url }: { url?: string }) {
-  if (!url) return <span className="text-sm text-white/30">—</span>
+  if (!url) return <span className="text-sm text-white/65">—</span>
 
   return (
     <a
@@ -337,15 +335,19 @@ function StatusControl({
     return (
       <Select value={application.status} onValueChange={onChange}>
         <SelectTrigger
-          className="h-8 w-36 rounded-lg border-white/10 bg-[#0d0d10] px-2 text-xs text-white"
+          className="h-9 w-40 rounded-lg border border-white/10 bg-[#15151b] px-3 text-xs font-medium text-white shadow-sm transition-all hover:border-[#5c53fe]/50 focus:ring-2 focus:ring-[#5c53fe]/30"
           aria-label="Change applicant status"
         >
           <SelectValue />
         </SelectTrigger>
 
-        <SelectContent>
+        <SelectContent className="rounded-xl border border-white/10 bg-[#111116] p-1.5 text-white shadow-xl">
           {APPLICATION_STATUSES.map((status) => (
-            <SelectItem key={status} value={status}>
+            <SelectItem
+              key={status}
+              value={status}
+              className="cursor-pointer rounded-lg px-3 py-2.5 text-sm text-white focus:bg-[#5c53fe]/15 focus:text-white"
+            >
               {status}
             </SelectItem>
           ))}
@@ -360,7 +362,7 @@ function StatusControl({
 
       <Select value={application.status} onValueChange={onChange}>
         <SelectTrigger
-          className="h-8 w-9 rounded-md border-white/10 bg-[#0d0d10] px-0"
+          className="h-9 w-40 rounded-lg border border-white/10 bg-[#15151b] px-3 text-xs font-medium text-white shadow-sm transition-all hover:border-[#5c53fe]/50 focus:ring-2 focus:ring-[#5c53fe]/30"
           aria-label="Change applicant status"
         >
           <SelectValue />
@@ -380,7 +382,7 @@ function StatusControl({
 
 function NoMatches() {
   return (
-    <p className="px-5 py-10 text-center text-sm text-white/45">
+    <p className="px-5 py-10 text-center text-sm text-white/80">
       No applicants match the current search.
     </p>
   )
@@ -390,14 +392,14 @@ function EmptyState() {
   return (
     <div className="flex flex-col items-center px-5 py-16 text-center">
       <span className="flex size-12 items-center justify-center rounded-full bg-[#222228]">
-        <Users className="size-5 text-white/40" aria-hidden="true" />
+        <Users className="size-5 text-white/75" aria-hidden="true" />
       </span>
 
       <h2 className="mt-4 font-manrope text-lg font-semibold">
         No applicants yet
       </h2>
 
-      <p className="mt-1.5 max-w-sm text-sm text-white/50">
+      <p className="mt-1.5 max-w-sm text-sm text-white/85">
         When seekers apply to this job, their submissions show up here for
         review.
       </p>

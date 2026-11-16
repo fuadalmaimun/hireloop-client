@@ -1,62 +1,53 @@
-
+'use server'
 import type { Application, ApplicationInput } from "@/lib/types/application"
+import { authFetch } from "../core/server"
 
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000"
 
 // Create application
 export const createApplication = async (data: ApplicationInput) => {
-  const response = await fetch(`${BASE_URL}/applications`, {
+  const response = await authFetch(`${BASE_URL}/applications`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
+    cache: "no-store",
   })
 
   return response.json()
 }
 
+// Update application status (recruiter)
 export const updateApplications = async (
   id: string,
   data: { status: string }
 ) => {
-  const res = await fetch(`${BASE_URL}/applications/${id}`, {
+  const res = await authFetch(`${BASE_URL}/applications/${id}`, {
     method: "PATCH",
     headers: {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(data),
-  });
+    cache: "no-store",
+  })
 
-  return res.json();
-};
+  return res.json()
+}
 
 // Get all applications
-export const getApplications = async (
-  applicantId: string
-): Promise<Application[]> => {
-  const response = await fetch(
-    `${BASE_URL}/applications?applicantId=${encodeURIComponent(applicantId)}`
-  )
+export const getApplications = async (query = "") => {
+  const api = `${BASE_URL}/applications?${query}`
 
-  if (!response.ok) return []
-
+  const response = await authFetch(api, { cache: "no-store" })
   return response.json()
 }
 
 // Get applications count
-// Get applications count
-export const getApplicationsCount = async (
-  applicantId: string
-): Promise<{ count: number }> => {
-  const response = await fetch(
-    `${BASE_URL}/applications/count?applicantId=${encodeURIComponent(applicantId)}`
-  )
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch applications count")
-  }
+export const getApplicationsCount = async (query = "") => {
+  const response = await authFetch(`${BASE_URL}/applications/count?${query}`, {
+    cache: "no-store",
+  })
 
   return response.json()
 }
@@ -66,8 +57,9 @@ export const getApplicationForJob = async (
   jobId: string,
   applicantId: string
 ): Promise<Application | null> => {
-  const response = await fetch(
-    `${BASE_URL}/applications?jobId=${encodeURIComponent(jobId)}&applicantId=${encodeURIComponent(applicantId)}`
+  const response = await authFetch(
+    `${BASE_URL}/applications?jobId=${encodeURIComponent(jobId)}&applicantId=${encodeURIComponent(applicantId)}`,
+    { cache: "no-store" }
   )
 
   if (!response.ok) return null
@@ -82,11 +74,38 @@ export const getApplicationForJob = async (
 export const getApplicationsForJob = async (
   jobId: string
 ): Promise<Application[]> => {
-  const response = await fetch(
-    `${BASE_URL}/applications?jobId=${encodeURIComponent(jobId)}`
-  )
+  const url = `${BASE_URL}/applications?jobId=${encodeURIComponent(jobId)}`
 
-  if (!response.ok) return []
+  console.log("[getApplicationsForJob] called:", url)
 
-  return response.json()
+  try {
+    const response = await authFetch(url, { cache: "no-store" })
+
+    if (!response.ok) {
+      console.error(
+        "[getApplicationsForJob] failed:",
+        response.status,
+        await response.text()
+      )
+      return []
+    }
+
+    const data = await response.json()
+
+    console.log(
+      "[getApplicationsForJob] received:",
+      Array.isArray(data) ? `${data.length} applications` : typeof data
+    )
+
+    return Array.isArray(data) ? data : []
+  } catch (error) {
+    // Let Next.js redirect()/notFound() errors pass through
+    const digest = (error as { digest?: string })?.digest
+    if (typeof digest === "string" && digest.startsWith("NEXT_")) {
+      throw error
+    }
+
+    console.error("[getApplicationsForJob] error:", error)
+    return []
+  }
 }

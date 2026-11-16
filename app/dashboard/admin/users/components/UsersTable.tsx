@@ -77,21 +77,22 @@ export function UsersTable({ users }: UsersTableProps) {
     setRows((prev) =>
       prev.map((row) => (row._id === id ? { ...row, role: role } : row))
     )
-    const users = await updateUserRole(id, role)
-    console.log("users", users)
+    const res = await updateUserRole(id, role)
 
     // TODO(role-update): persist via the API.
-    toast.add({
-      title: `Role set to ${role}`,
-      description: "Database persistence coming soon.",
-      type: "info",
-    })
+    if (res.modifiedCount > 0) {
+      toast.add({
+        title: `Role set to ${role}`,
+        description: "Database persistence coming soon.",
+        type: "info",
+      })
+    }
   }
 
   return (
     <>
       {/* Stats row */}
-      <div className="mt-6 text-white grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-6 grid grid-cols-1 gap-3 text-white sm:grid-cols-2 lg:grid-cols-4">
         {[
           { label: "Total Users", value: stats.total },
           { label: "Seekers", value: stats.seekers },
@@ -158,7 +159,7 @@ export function UsersTable({ users }: UsersTableProps) {
                   "flex h-8 items-center rounded-md px-4 text-xs font-medium transition-colors " +
                   (pillFilter === value
                     ? "bg-[#5c53fe] text-white"
-                    : "text-white/55 hover:text-white")
+                    : "text-white/85 hover:text-white")
                 }
               >
                 {label}
@@ -171,7 +172,7 @@ export function UsersTable({ users }: UsersTableProps) {
       {/* Search */}
       <div className="relative mt-6">
         <Search
-          className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-white/30"
+          className="pointer-events-none absolute top-1/2 left-3.5 size-4 -translate-y-1/2 text-white/65"
           aria-hidden="true"
         />
 
@@ -204,7 +205,7 @@ export function UsersTable({ users }: UsersTableProps) {
                 ].map((title) => (
                   <span
                     key={title}
-                    className="text-xs font-medium tracking-wide text-[#a0a0ab] uppercase"
+                    className="text-xs font-medium tracking-wide text-white uppercase"
                   >
                     {title}
                   </span>
@@ -239,7 +240,7 @@ export function UsersTable({ users }: UsersTableProps) {
       </section>
 
       {rows.length > 0 ? (
-        <p className="mt-4 px-1 text-xs text-white/35">
+        <p className="mt-4 px-1 text-xs text-white/70">
           Showing {filtered.length} of {rows.length} users
         </p>
       ) : null}
@@ -270,7 +271,7 @@ function UserRow({
 
       <PlanMark premium={user.premium} />
 
-      <span className="text-sm text-[#a0a0ab]">
+      <span className="text-sm text-white">
         {formatDate(user.createdAt)}
       </span>
 
@@ -296,7 +297,7 @@ function UserCard({
         <RoleBadge role={user.role} />
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-[#a0a0ab]">
+      <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-white">
         <VerifiedMark verified={user.emailVerified} />
 
         <PlanMark premium={user.premium} />
@@ -305,7 +306,7 @@ function UserCard({
       </div>
 
       <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/[0.07] pt-3">
-        <span className="text-xs text-[#a0a0ab]">Change role</span>
+        <span className="text-xs text-white">Change role</span>
 
         <RoleControl user={user} onRoleChange={onRoleChange} />
       </div>
@@ -318,14 +319,14 @@ function UserIdentity({ user }: { user: User }) {
 
   return (
     <div className="flex min-w-0 items-center gap-3">
-      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#222228] text-xs font-semibold text-[#ededef]">
+      <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-[#222228] text-xs font-semibold text-white">
         {name.charAt(0).toUpperCase()}
       </span>
 
       <div className="min-w-0">
-        <p className="truncate text-sm font-medium text-[#ededef]">{name}</p>
+        <p className="truncate text-sm font-medium text-white">{name}</p>
 
-        <p className="truncate text-xs text-white/40">{user.email}</p>
+        <p className="truncate text-xs text-white/75">{user.email}</p>
       </div>
     </div>
   )
@@ -336,7 +337,7 @@ function VerifiedMark({ verified }: { verified: boolean }) {
     <span
       className={
         "flex w-fit items-center gap-1.5 text-xs " +
-        (verified ? "text-[#22c55e]" : "text-white/35")
+        (verified ? "text-[#22c55e]" : "text-white/70")
       }
       title={verified ? "Email verified" : "Email not verified"}
     >
@@ -353,7 +354,7 @@ function PlanMark({ premium }: { premium?: boolean }) {
         "inline-flex w-fit items-center rounded-full border px-2.5 py-0.5 text-[11px] font-medium " +
         (premium
           ? "border-[#22c55e]/30 bg-[#22c55e]/10 text-[#22c55e]"
-          : "border-white/10 bg-white/[0.04] text-white/45")
+          : "border-white/10 bg-white/[0.04] text-white/80")
       }
     >
       {premium ? "Premium" : "Free"}
@@ -398,7 +399,7 @@ function RoleControl({
 
 function NoMatches() {
   return (
-    <p className="px-5 py-10 text-center text-sm text-white/45">
+    <p className="px-5 py-10 text-center text-sm text-white/80">
       No users match the current search.
     </p>
   )
@@ -408,14 +409,14 @@ function EmptyState() {
   return (
     <div className="flex flex-col items-center px-5 py-16 text-center">
       <span className="flex size-12 items-center justify-center rounded-full bg-[#222228]">
-        <Users className="size-5 text-white/40" aria-hidden="true" />
+        <Users className="size-5 text-white/75" aria-hidden="true" />
       </span>
 
       <h2 className="mt-4 font-manrope text-lg font-semibold">
         No users found
       </h2>
 
-      <p className="mt-1.5 max-w-sm text-sm text-white/50">
+      <p className="mt-1.5 max-w-sm text-sm text-white/85">
         New accounts will show up here as soon as they sign up.
       </p>
     </div>

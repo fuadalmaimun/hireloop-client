@@ -3,11 +3,11 @@
 
 /** Text fields in forms (job/new page). */
 export const inputClass =
-  "h-10 rounded-lg border-white/15 bg-[#0d0d10] text-sm text-white placeholder:text-white/30 focus-visible:border-[#5c53fe]/70 focus-visible:ring-[#5c53fe]/25"
+  "h-10 rounded-lg border-white/15 bg-[#0d0d10] text-sm text-white placeholder:text-white/65 focus-visible:border-[#5c53fe]/70 focus-visible:ring-[#5c53fe]/25"
 
 /** Job description textarea (multi-line form field). */
 export const textareaClass =
-  "min-h-32 rounded-lg border-white/15 bg-[#0d0d10] text-sm text-white placeholder:text-white/30 focus-visible:border-[#5c53fe]/70 focus-visible:ring-[#5c53fe]/25"
+  "min-h-32 rounded-lg border-white/15 bg-[#0d0d10] text-sm text-white placeholder:text-white/65 focus-visible:border-[#5c53fe]/70 focus-visible:ring-[#5c53fe]/25"
 
 /** Filter selects in the Manage Jobs table. */
 export const selectClass =
@@ -15,11 +15,11 @@ export const selectClass =
 
 /** Search input with the filter selects' height (icon sits over pl-10). */
 export const searchInputClass =
-  "h-11 rounded-lg border-white/15 bg-[#0d0d10] pr-4 pl-10 text-sm text-white placeholder:text-white/30 focus-visible:border-[#5c53fe]/70 focus-visible:ring-[#5c53fe]/25"
+  "h-11 rounded-lg border-white/15 bg-[#0d0d10] pr-4 pl-10 text-sm text-white placeholder:text-white/65 focus-visible:border-[#5c53fe]/70 focus-visible:ring-[#5c53fe]/25"
 
 /** Uppercase monospace mini-label above filters ("STATUS", "QUICK FILTER"). */
 export const monoLabelClass =
-  "font-mono text-xs tracking-[0.2em] text-white/40 uppercase"
+  "font-mono text-xs tracking-[0.2em] text-white/75 uppercase"
 
 /** Dark card / table shell used across dashboard pages. */
 export const darkCardClass =
@@ -27,7 +27,7 @@ export const darkCardClass =
 
 /** Ghost-ish icon buttons (view/edit actions). */
 export const ghostIconButtonClass =
-  "text-white/50 hover:bg-white/10 hover:text-white"
+  "text-white/85 hover:bg-white/10 hover:text-white"
 
 /** Standard dashboard page container — every dashboard page wraps in this. */
 export const pageContainerClass =
@@ -38,7 +38,7 @@ export const pageTitleClass =
   "font-manrope text-2xl font-bold tracking-tight sm:text-[28px]"
 
 /** Dashboard page subtitle under the title. */
-export const pageDescClass = "mt-1.5 max-w-lg text-sm text-[#a0a0ab]"
+export const pageDescClass = "mt-1.5 max-w-lg text-sm text-white"
 
 /** Small stat card used in the stat strip above tables. */
 export const statCardClass = "rounded-xl border border-white/10 bg-[#0d0d10] p-4"

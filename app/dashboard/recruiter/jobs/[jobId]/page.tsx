@@ -60,7 +60,7 @@ const JobDetailsPage = async ({
     <div className={pageContainerClass}>
       <Link
         href="/dashboard/recruiter/jobs"
-        className="inline-flex items-center gap-1.5 text-sm text-white/55 transition-colors hover:text-white"
+        className="inline-flex items-center gap-1.5 text-sm text-white/85 transition-colors hover:text-white"
       >
         <ArrowLeft className="size-4" aria-hidden="true" />
         Back to jobs
@@ -82,7 +82,7 @@ const JobDetailsPage = async ({
           <div className="mt-2 flex items-center gap-3">
             <CompanyAvatar name={job.companyName} />
 
-            <p className="flex items-center gap-1.5 text-sm text-[#a0a0ab]">
+            <p className="flex items-center gap-1.5 text-sm text-white">
               <MapPin className="size-4" aria-hidden="true" />
               {job.location || "—"}
             </p>
@@ -101,34 +101,34 @@ const JobDetailsPage = async ({
       {/* Key facts */}
       <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
         <div className={statCardClass}>
-          <p className="flex items-center gap-1.5 text-sm text-[#a0a0ab]">
+          <p className="flex items-center gap-1.5 text-sm text-white">
             <Banknote className="size-4" aria-hidden="true" />
             Salary
           </p>
 
-          <p className="mt-1.5 text-sm font-medium text-[#ededef]">
+          <p className="mt-1.5 text-sm font-medium text-white">
             {salaryText(job)}
           </p>
         </div>
 
         <div className={statCardClass}>
-          <p className="flex items-center gap-1.5 text-sm text-[#a0a0ab]">
+          <p className="flex items-center gap-1.5 text-sm text-white">
             <Globe className="size-4" aria-hidden="true" />
             Job type
           </p>
 
-          <p className="mt-1.5 text-sm font-medium text-[#ededef] capitalize">
+          <p className="mt-1.5 text-sm font-medium text-white capitalize">
             {job.jobType || "—"}
           </p>
         </div>
 
         <div className={statCardClass}>
-          <p className="flex items-center gap-1.5 text-sm text-[#a0a0ab]">
+          <p className="flex items-center gap-1.5 text-sm text-white">
             <CalendarDays className="size-4" aria-hidden="true" />
             Deadline
           </p>
 
-          <p className="mt-1.5 text-sm font-medium text-[#ededef]">
+          <p className="mt-1.5 text-sm font-medium text-white">
             {job.applicationDeadline || "—"}
           </p>
         </div>

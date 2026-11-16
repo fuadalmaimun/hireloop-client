@@ -91,7 +91,7 @@ export default function CreateJobPage() {
       <header className="sticky top-0 z-10 flex h-14 items-center gap-4 border-b border-white/10 bg-[#010109]/95 px-4 sm:px-6">
         <Link
           href="/dashboard/recruiter"
-          className="flex size-8 items-center justify-center rounded-lg text-white/60 transition-colors hover:bg-white/10 hover:text-white"
+          className="flex size-8 items-center justify-center rounded-lg text-white/85 transition-colors hover:bg-white/10 hover:text-white"
           aria-label="Back to dashboard"
         >
           <ArrowLeft className="size-4" aria-hidden="true" />
@@ -108,7 +108,7 @@ export default function CreateJobPage() {
         <h1 className="mt-3 font-manrope text-2xl font-bold tracking-tight sm:text-3xl">
           Post a new job
         </h1>
-        <p className="mt-1.5 text-sm text-[#a0a0ab]">
+        <p className="mt-1.5 text-sm text-white">
           Describe the role so the right candidates can find it.
         </p>
 
@@ -246,7 +246,7 @@ export default function CreateJobPage() {
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor="location" className="text-xs text-white/70">
                     Location{" "}
-                    <span className="text-[10px] text-white/40">
+                    <span className="text-[10px] text-white/75">
                       (hidden for remote)
                     </span>
                   </Label>
@@ -300,7 +300,7 @@ export default function CreateJobPage() {
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="skills" className="text-xs text-white/70">
                   Skills{" "}
-                  <span className="text-[10px] text-white/40">
+                  <span className="text-[10px] text-white/75">
                     (comma separated)
                   </span>
                 </Label>

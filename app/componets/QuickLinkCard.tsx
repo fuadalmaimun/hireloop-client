@@ -33,9 +33,9 @@ export function QuickLinkCard({
       </span>
 
       <div>
-        <p className="text-sm font-semibold text-[#ededef]">{title}</p>
+        <p className="text-sm font-semibold text-white">{title}</p>
 
-        <p className="mt-1 text-xs text-[#a0a0ab]">{description}</p>
+        <p className="mt-1 text-xs text-white">{description}</p>
       </div>
 
       <span className="mt-auto inline-flex items-center gap-1 text-xs font-medium text-[#827aff] transition-colors group-hover:text-white">

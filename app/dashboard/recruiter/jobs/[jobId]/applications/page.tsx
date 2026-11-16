@@ -39,7 +39,7 @@ export default async function JobApplicationsPage({
     <div className={pageContainerClass}>
       <Link
         href="/dashboard/recruiter/jobs"
-        className="inline-flex items-center gap-1.5 text-sm text-white/55 transition-colors hover:text-white"
+        className="inline-flex items-center gap-1.5 text-sm text-white/85 transition-colors hover:text-white"
       >
         <ArrowLeft className="size-4" aria-hidden="true" />
         Back to jobs
@@ -48,7 +48,7 @@ export default async function JobApplicationsPage({
       <div className="mt-4">
         <PageHeader
           eyebrow={`Job ref · ${job.ref || "—"}`}
-          title={job.jobTitle}
+          title={<span className="text-white">{job.jobTitle}</span>}
           description={`${job.companyName} · ${job.location}`}
         />
       </div>

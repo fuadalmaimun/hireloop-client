@@ -42,17 +42,17 @@ export function DeleteJobDialog({ job }: { job: JobFormData }) {
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger
         aria-label="Delete job"
-        className="inline-flex size-8 items-center justify-center rounded-md p-2 text-white/50 transition-colors hover:bg-[#ef4444]/10 hover:text-[#f87171]"
+        className="inline-flex size-8 items-center justify-center rounded-md p-2 text-white/85 transition-colors hover:bg-[#ef4444]/10 hover:text-[#f87171]"
       >
         <Trash2 className="size-4" />
       </AlertDialogTrigger>
 
       <AlertDialogContent className="border-white/10 bg-[#141418] text-white">
         <AlertDialogHeader>
-          <AlertDialogTitle className="text-lg font-semibold text-[#ededef]">
+          <AlertDialogTitle className="text-lg font-semibold text-white">
             Are you absolutely sure?
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-sm text-[#a0a0ab]">
+          <AlertDialogDescription className="text-sm text-white">
             This action cannot be undone. This will permanently delete this job
             post
             {job._id ? ` (Ref: ${job._id})` : ""} and remove its data from our

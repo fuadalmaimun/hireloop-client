@@ -19,7 +19,7 @@ export default async function ManageJobsPage() {
     <div className={pageContainerClass}>
       <PageHeader
         eyebrow="Recruiter · Jobs"
-        title="Manage Jobs"
+        title={<span className="text-white">Manage Jobs</span>}
         description="Oversee all active listings and historical job posts across the platform."
         actions={
           <Button
