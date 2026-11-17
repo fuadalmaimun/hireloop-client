@@ -3,7 +3,7 @@ import { auth } from "../auth";
 
 
 export const  getUsers = async () => {
-  const users = await auth.api.listUsers({
+  const users = await (auth.api as any).listUsers({
     query: {
         sortBy: "name", // The field to sort by.
         sortDirection: "desc", // The direction to sort by.

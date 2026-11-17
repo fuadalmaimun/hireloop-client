@@ -1,10 +1,10 @@
 import { redirect } from "next/navigation"
 
 import { getSession } from "@/lib/core/server"
-import { getUsers } from "@/lib/actions/users"
 import { PageHeader } from "@/app/componets/PageHeader"
 import { pageContainerClass } from "@/lib/ui-styles"
 import { UsersTable } from "./components/UsersTable"
+import { getUsers } from "@/lib/actions/users"
 
 // Admin "Users management" screen — /dashboard/admin/users
 //

@@ -119,7 +119,7 @@ const BrowseDetailsPage = async ({
                 <Bookmark size={17} />
               </span>
               <ApplyButton
-                jobId={job._id.toString()}
+                jobId={job._id ?? ""}
                 jobTitle={job.jobTitle}
               />{" "}
             </div>

@@ -109,7 +109,8 @@ function SidebarBrand({
   )
 }
 
-// Signed-in user card pinned above the logout action.
+// Signed-in user card pinned above the logout action — clicking it opens
+// the profile page where the user can update their name and picture.
 function SidebarUserCard({
   user,
 }: {
@@ -119,26 +120,28 @@ function SidebarUserCard({
   const initials = name.charAt(0).toUpperCase()
 
   return (
-    <div className="flex items-center gap-2.5 rounded-lg border border-white/[0.07] bg-white/[0.03] p-2.5">
-      {user.image ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={user.image}
-          alt=""
-          className="size-8 shrink-0 rounded-full border border-white/10 object-cover"
-        />
-      ) : (
-        <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#222228] text-xs font-semibold text-white">
-          {initials}
-        </span>
-      )}
+    <Link href="/profile" className="block">
+      <div className="flex items-center gap-2.5 rounded-lg border border-white/[0.07] bg-white/[0.03] p-2.5 transition-colors hover:bg-white/[0.06]">
+        {user.image ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={user.image}
+            alt=""
+            className="size-8 shrink-0 rounded-full border border-white/10 object-cover"
+          />
+        ) : (
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-[#222228] text-xs font-semibold text-white">
+            {initials}
+          </span>
+        )}
 
-      <div className="min-w-0 flex-1">
-        <p className="truncate text-xs font-medium text-white">{name}</p>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-xs font-medium text-white">{name}</p>
 
-        <p className="truncate text-[11px] text-white/75">{user.email}</p>
+          <p className="truncate text-[11px] text-white/75">{user.email}</p>
+        </div>
       </div>
-    </div>
+    </Link>
   )
 }
 

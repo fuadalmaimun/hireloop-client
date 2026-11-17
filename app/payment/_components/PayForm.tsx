@@ -14,7 +14,7 @@ const SEEKER_PRICE = 20
 const RECRUITER_PRICE = 79
 const BDT_RATE = 127.6666
 
-export default function PayForm() {
+export default function PayForm({ canceled }: { canceled?: string }) {
   const [currency, setCurrency] = React.useState<"BDT" | "USD">("BDT")
   const [paying, setPaying] = React.useState(false)
 

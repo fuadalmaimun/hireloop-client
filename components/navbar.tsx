@@ -133,7 +133,14 @@ export function Navbar() {
             <div className="h-8 w-24 animate-pulse rounded-lg bg-white/10" />
           ) : session ? (
             <>
-              <UserAvatar user={session.user ?? {}} />
+              <Link
+                href="/profile"
+                aria-label="Your profile"
+                title="Your profile"
+                className="shrink-0 rounded-full transition-opacity hover:opacity-80"
+              >
+                <UserAvatar user={session.user ?? {}} />
+              </Link>
 
               <p className="text-xs font-medium text-neutral-300 lg:text-sm">
                 Welcome,{" "}
@@ -221,7 +228,11 @@ export function Navbar() {
                 <div className="mx-3 h-10 animate-pulse rounded-lg bg-white/10" />
               ) : session ? (
                 <>
-                  <div className="flex items-center gap-3 px-3 py-2">
+                  <Link
+                    href="/profile"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-3 rounded-lg px-3 py-2 transition-colors hover:bg-white/10"
+                  >
                     <UserAvatar user={session.user ?? {}} />
 
                     <p className="text-sm font-medium text-neutral-300">
@@ -230,7 +241,7 @@ export function Navbar() {
                         {session.user?.name}
                       </span>
                     </p>
-                  </div>
+                  </Link>
 
                   <button
                     type="button"

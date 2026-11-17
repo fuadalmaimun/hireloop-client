@@ -37,6 +37,16 @@ function ErrorBox({ children }: { children: React.ReactNode }) {
 }
 
 export default function SignInPage() {
+  // useSearchParams() inside the form requires a Suspense boundary so the
+  // page can be statically prerendered.
+  return (
+    <React.Suspense>
+      <SignInForm />
+    </React.Suspense>
+  )
+}
+
+function SignInForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
 

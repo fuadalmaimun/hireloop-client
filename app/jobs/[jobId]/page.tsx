@@ -131,7 +131,7 @@ export default async function PublicJobDetailsPage({
             <CategoryBadge
               category={optionLabel(EXPERIENCE_LEVELS, job.experienceLevel)}
             />
-            <CategoryBadge category={job.category} />
+            <CategoryBadge category={job.category ?? ""} />
           </div>
         </section>
 

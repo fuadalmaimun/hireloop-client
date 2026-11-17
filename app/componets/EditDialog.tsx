@@ -44,7 +44,7 @@ export function EditJobDialog({ job }: { job: JobFormData }) {
     
 
     try {
-      await updateJob(job._id, formData)
+      await updateJob(job._id ?? "", formData)
       setOpen(false)
     } catch {
       toast.add({ title: "Failed to update job", type: "error" })

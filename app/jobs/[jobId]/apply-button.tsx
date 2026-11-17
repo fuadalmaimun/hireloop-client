@@ -37,7 +37,7 @@ export function ApplyButton({ job }: { job: JobFormData }) {
     if (!user?.id) return
     let active = true
 
-    getApplicationForJob(job._id, user.id).then((existing) => {
+    getApplicationForJob(job._id ?? "", user.id).then((existing) => {
       if (active && existing) setApplied(true)
     })
 
@@ -80,7 +80,7 @@ export function ApplyButton({ job }: { job: JobFormData }) {
       }
 
       const result = await createApplication({
-        jobId: job._id,
+        jobId: job._id ?? "",
         jobRef: job.ref || "",
         jobTitle: job.jobTitle,
         companyName: job.companyName,

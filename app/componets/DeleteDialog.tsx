@@ -24,7 +24,7 @@ export function DeleteJobDialog({ job }: { job: JobFormData }) {
   const router = useRouter()
 
   const handleDelete = async () => {
-    const res = await deleteJob(job._id)
+    const res = await deleteJob(job._id ?? "")
     console.log(`Deleting job with ID: ${job._id}`, res)
 
     if (res.deletedCount > 0) {

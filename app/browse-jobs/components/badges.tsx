@@ -5,7 +5,7 @@ import type { ApplicationStatus } from "@/lib/types/application"
 import type { Role } from "@/lib/types/dashboard"
 import { normalizeStatus } from "@/lib/format"
 
-export function StatusBadge({ status }: { status: JobStatus }) {
+export function StatusBadge({ status }: { status?: JobStatus }) {
   const active = normalizeStatus(status) === "Active"
 
   return (

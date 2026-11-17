@@ -1,29 +1,25 @@
+"use client"
 
-"use client";
+import * as React from "react"
+import Link from "next/link"
+import { useRouter, useSearchParams } from "next/navigation"
+import { signUp } from "@/lib/auth-client"
 
-import * as React from "react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { signUp } from "@/lib/auth-client";
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-
-import {
-  BriefcaseBusiness,
-  UserSearch,
-} from "lucide-react";
+import { Camera, X, BriefcaseBusiness, UserSearch } from "lucide-react"
 
 const roles = [
   { value: "seeker", label: "Seeker", icon: UserSearch },
   { value: "recruiter", label: "Recruiter", icon: BriefcaseBusiness },
-] as const;
+] as const
 
 const inputClass =
-  "h-10 rounded-lg border-white/15 bg-[#101010] text-xs text-white placeholder:text-white/40 focus-visible:border-[#5c53fe]/70 focus-visible:ring-[#5c53fe]/25 sm:h-11 sm:text-sm";
+  "h-10 rounded-lg border-white/15 bg-[#101010] text-xs text-white placeholder:text-white/40 focus-visible:border-[#5c53fe]/70 focus-visible:ring-[#5c53fe]/25 sm:h-11 sm:text-sm"
 
 const submitButtonClass =
-  "flex h-10 w-full items-center justify-center rounded-lg bg-[#5c53fe] text-xs font-medium text-white shadow-[0_0_15px_rgba(92,83,254,0.35)] transition-colors hover:bg-[#6c63ff] disabled:pointer-events-none disabled:opacity-60 sm:h-11 sm:text-sm";
+  "flex h-10 w-full items-center justify-center rounded-lg bg-[#5c53fe] text-xs font-medium text-white shadow-[0_0_15px_rgba(92,83,254,0.35)] transition-colors hover:bg-[#6c63ff] disabled:pointer-events-none disabled:opacity-60 sm:h-11 sm:text-sm"
 
 function Divider() {
   return (
@@ -31,7 +27,7 @@ function Divider() {
       <span className="h-px flex-1 bg-white/10" />
       <span className="h-px flex-1 bg-white/10" />
     </div>
-  );
+  )
 }
 
 function ErrorBox({ children }: { children: React.ReactNode }) {
@@ -42,69 +38,114 @@ function ErrorBox({ children }: { children: React.ReactNode }) {
     >
       {children}
     </p>
-  );
+  )
 }
 
 export default function SignUpPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  // useSearchParams() inside the form requires a Suspense boundary so the
+  // page can be statically prerendered.
+  return (
+    <React.Suspense>
+      <SignUpForm />
+    </React.Suspense>
+  )
+}
 
-  const redirectTo = searchParams.get("redirectTo") || "/";
+function SignUpForm() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
-  const [name, setName] = React.useState("");
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [role, setRole] = React.useState<"seeker" | "recruiter">("seeker");
-  const [image, setImage] = React.useState<File | null>(null);
+  const redirectTo = searchParams.get("redirectTo") || "/"
 
-  const [loading, setLoading] = React.useState(false);
-  const [error, setError] = React.useState<string | null>(null);
+  const [name, setName] = React.useState("")
+  const [email, setEmail] = React.useState("")
+  const [password, setPassword] = React.useState("")
+  const [role, setRole] = React.useState<"seeker" | "recruiter">("seeker")
+  const [image, setImage] = React.useState<File | null>(null)
+  const [imagePreview, setImagePreview] = React.useState<string | null>(null)
+  const imageInputRef = React.useRef<HTMLInputElement>(null)
 
+  const [loading, setLoading] = React.useState(false)
+  const [error, setError] = React.useState<string | null>(null)
+  const [imageUrl, setImageUrl] = React.useState("")
   // TODO(image-upload): on submit, upload `image` to storage and pass the
   // resulting URL to signUp.email({ ..., image }) — not implemented yet.
-  function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0] ?? null;
-    setImage(file);
+  // `imagePreview` is only a local object-URL preview for the UI.
+
+  async function handleImageChange(event: React.ChangeEvent<HTMLInputElement>) {
+
+    const file = event.target.files?.[0] ?? null
+    setImage(file)
+
+    if (!file) return
+
+    if (imagePreview) URL.revokeObjectURL(imagePreview)
+
+    setImagePreview(URL.createObjectURL(file))
+
+    const formData = new FormData()
+    formData.append("image", file)
+
+    const imagebbAPI = `https://api.imgbb.com/1/upload?key=${process.env.NEXT_PUBLIC_IMAGEBB_API_KEY}`
+
+    const res = await fetch(imagebbAPI, {
+      method: "POST",
+      body: formData,
+    })
+
+    const result = await res.json()
+    const imageUrl = result.data.url
+    setImageUrl(imageUrl)
+
+    console.log(imageUrl)
   }
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
+  function handleImageRemove() {
+    if (imageInputRef.current) imageInputRef.current.value = ""
+    if (imagePreview) URL.revokeObjectURL(imagePreview)
+    setImage(null)
+    setImagePreview(null)
+    setImageUrl("")
+  }
 
-    if (loading) return;
+async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  event.preventDefault();
+  if (loading) return;
 
-    setError(null);
+  setError(null);
 
-    if (password.length <= 6) {
-      setError("Password must be at least 7 characters.");
+  if (password.length <= 6) {
+    setError("Password must be at least 6 characters.");
+    return;
+  }
+
+  setLoading(true);
+
+  try {
+    const { error: authError } = await signUp.email({
+      name,
+      email,
+      password,
+      role,
+      image: imageUrl,
+    });
+
+    if (authError) {
+      setError(authError.message ?? "Unable to create your account.");
       return;
     }
 
-    setLoading(true);
-
-    try {
-      const { error: authError } = await signUp.email({
-        name,
-        email,
-        password,
-        role,
-      });
-
-      if (authError) {
-        setError(authError.message ?? "Unable to create your account.");
-        return;
-      }
-
-      router.replace(redirectTo);
-      router.refresh();
-    } catch {
-      setError("Something went wrong. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+    router.replace(redirectTo);
+    router.refresh();
+  } catch {
+    setError("Something went wrong. Please try again.");
+  } finally {
+    setLoading(false);
   }
+}
 
   return (
-    <main className="flex min-h-screen items-center justify-center  px-4 py-10">
+    <main className="flex min-h-screen items-center justify-center px-4 py-10">
       <div className="w-full max-w-md rounded-2xl border border-white/10 bg-gradient-to-b p-6 shadow-[0_15px_50px_rgba(0,0,0,0.55)] backdrop-blur sm:p-8">
         {/* Badge */}
         <div className="flex justify-center">
@@ -238,20 +279,68 @@ export default function SignUpPage() {
               Profile image
             </Label>
 
+            <div className="flex items-center gap-3.5 rounded-xl border border-white/15 bg-[#101010] p-3 transition-colors focus-within:border-[#5c53fe]/70 hover:border-white/25">
+              <label
+                htmlFor="signup-image"
+                className="group relative shrink-0 cursor-pointer"
+                title="Choose a profile image"
+              >
+                {imagePreview ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={imagePreview}
+                    alt="Selected profile preview"
+                    className="size-14 rounded-full border-2 border-[#5c53fe]/60 object-cover sm:size-16"
+                  />
+                ) : (
+                  <span className="flex size-14 items-center justify-center rounded-full border-2 border-dashed border-white/20 bg-white/[0.04] text-white/50 transition-colors group-hover:border-[#5c53fe]/60 group-hover:text-[#827aff] sm:size-16">
+                    <Camera className="size-5" />
+                  </span>
+                )}
+
+                <span className="absolute -right-0.5 -bottom-0.5 flex size-5 items-center justify-center rounded-full bg-[#5c53fe] text-white shadow-[0_0_8px_rgba(92,83,254,0.5)]">
+                  <Camera className="size-2.5" />
+                </span>
+              </label>
+
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-xs font-medium text-white">
+                  {imageUrl || "Upload a profile photo"}
+                </p>
+                <p className="mt-0.5 text-[11px] text-white/45">
+                  PNG or JPG — optional
+                </p>
+              </div>
+
+              {imageUrl ? (
+                <button
+                  type="button"
+                  onClick={handleImageRemove}
+                  aria-label="Remove selected image"
+                  className="flex size-7 shrink-0 items-center justify-center rounded-full border border-white/15 text-white/60 transition-colors hover:border-red-400/40 hover:bg-red-500/10 hover:text-red-300"
+                >
+                  <X className="size-3.5" />
+                </button>
+              ) : (
+                <label
+                  htmlFor="signup-image"
+                  className="shrink-0 cursor-pointer rounded-lg border border-white/15 px-3 py-1.5 text-[11px] font-medium text-white/80 transition-colors hover:border-[#5c53fe]/60 hover:bg-[#5c53fe]/10 hover:text-white"
+                >
+                  Choose
+                </label>
+              )}
+            </div>
+
+            {/* Hidden input — the picker UI above triggers it */}
             <Input
+              ref={imageInputRef}
               id="signup-image"
               type="file"
               name="image"
               accept="image/*"
               onChange={handleImageChange}
-              className="h-10 rounded-lg border-white/15 bg-[#101010] text-xs text-white file:mr-3 file:h-full file:rounded-l-lg file:border-0 file:border-r file:border-white/15 file:bg-white/[0.06] file:px-3 file:text-xs file:font-medium file:text-white/80 sm:h-11 sm:text-sm"
+              className="sr-only"
             />
-
-            {image ? (
-              <p className="text-[11px] text-white/55">
-                Selected: {image.name}
-              </p>
-            ) : null}
           </div>
 
           {/* Submit */}
@@ -284,5 +373,5 @@ export default function SignUpPage() {
         </p>
       </div>
     </main>
-  );
+  )
 }

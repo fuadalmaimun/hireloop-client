@@ -23,6 +23,8 @@ export interface JobFormData {
   salaryMax: string
   salaryPeriod: string
   applicationDeadline: string
+  /** Written by the backend when the job is created (ISO date string). */
+  datePosted?: string
   salary?: string
   category?: string
   status?: JobStatus

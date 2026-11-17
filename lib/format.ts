@@ -2,7 +2,7 @@ import type { JobStatus } from "@/lib/types/job"
 
 // Small format/normalize helpers shared across dashboard pages.
 
-export function formatDate(iso: string) {
+export function formatDate(iso: string | undefined) {
   if (!iso) return "N/A"
 
   return new Date(iso + "T00:00:00").toLocaleDateString("en-US", {
